@@ -162,6 +162,33 @@ var pageUpdateCmd = &cobra.Command{
 	},
 }
 
+var pageDeleteCmd = &cobra.Command{
+	Use:   "delete [page-id]",
+	Short: "Delete a Confluence page (moves to trash)",
+	Args:  cobra.ExactArgs(1),
+	Example: `  aidlc confluence delete 12345`,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		client, err := resolveConfluenceClient(cmd)
+		if err != nil {
+			return err
+		}
+
+		// Fetch page title for confirmation message
+		page, _ := client.GetPage(args[0])
+		title := args[0]
+		if page != nil {
+			title = page.Title
+		}
+
+		if err := client.DeletePage(args[0]); err != nil {
+			return err
+		}
+
+		fmt.Printf("Deleted page %s: %s\n", args[0], title)
+		return nil
+	},
+}
+
 func init() {
 	// create flags
 	pageCreateCmd.Flags().String("title", "", "page title (required)")

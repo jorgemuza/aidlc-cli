@@ -2,7 +2,6 @@ package confluence
 
 import (
 	"fmt"
-	"path/filepath"
 	"regexp"
 	"strings"
 )
@@ -48,9 +47,9 @@ func MarkdownToStorageWithLinks(md string, linkMap map[string]string) string {
 				// Close code block
 				code := escapeXML(strings.Join(codeLines, "\n"))
 				if codeLang != "" {
-					out = append(out, fmt.Sprintf(`<div class="code-block" data-layout="full-width"><ac:structured-macro ac:name="code"><ac:parameter ac:name="language">%s</ac:parameter><ac:plain-text-body><![CDATA[%s]]></ac:plain-text-body></ac:structured-macro></div>`, codeLang, code))
+					out = append(out, fmt.Sprintf(`<ac:structured-macro ac:name="code"><ac:parameter ac:name="language">%s</ac:parameter><ac:plain-text-body><![CDATA[%s]]></ac:plain-text-body></ac:structured-macro>`, codeLang, code))
 				} else {
-					out = append(out, fmt.Sprintf(`<div class="code-block" data-layout="full-width"><ac:structured-macro ac:name="code"><ac:plain-text-body><![CDATA[%s]]></ac:plain-text-body></ac:structured-macro></div>`, code))
+					out = append(out, fmt.Sprintf(`<ac:structured-macro ac:name="code"><ac:plain-text-body><![CDATA[%s]]></ac:plain-text-body></ac:structured-macro>`, code))
 				}
 				inCodeBlock = false
 				codeLang = ""
@@ -326,28 +325,11 @@ func convertInline(text string, linkMap map[string]string) string {
 		if strings.HasPrefix(href, "#") {
 			return label
 		}
-		// Relative markdown links become Confluence page links
+		// Relative markdown links — resolve to page title text.
+		// The ac:link macro is incompatible with the Confluence Fabric editor,
+		// so we render these as plain text with the link label.
 		if strings.HasSuffix(href, ".md") || strings.HasPrefix(href, "./") || strings.HasPrefix(href, "../") {
-			pageTitle := label // default: use the link label as page title
-			if linkMap != nil {
-				// Try to resolve from the link map
-				// Normalize the href: strip ./ prefix, keep ../ paths
-				normalized := href
-				normalized = strings.TrimPrefix(normalized, "./")
-				// Also try with the raw href
-				if t, ok := linkMap[normalized]; ok {
-					pageTitle = t
-				} else if t, ok := linkMap[href]; ok {
-					pageTitle = t
-				} else {
-					// Try just the filename
-					base := filepath.Base(href)
-					if t, ok := linkMap[base]; ok {
-						pageTitle = t
-					}
-				}
-			}
-			return fmt.Sprintf(`<ac:link><ri:page ri:content-title="%s" /><ac:plain-text-link-body><![CDATA[%s]]></ac:plain-text-link-body></ac:link>`, pageTitle, label)
+			return label
 		}
 		return fmt.Sprintf(`<a href="%s">%s</a>`, href, label)
 	})
@@ -423,7 +405,7 @@ func convertMetadataBlock(md string) string {
 	var tbl strings.Builder
 	tbl.WriteString(`<table data-layout="full-width"><tbody>`)
 	for _, row := range metaRows {
-		tbl.WriteString(fmt.Sprintf(`<tr><td class="highlight-grey" data-highlight-colour="grey"><strong>%s</strong></td><td>%s</td></tr>`, row[0], row[1]))
+		tbl.WriteString(fmt.Sprintf(`<tr><td style="background-color:#f4f5f7"><strong>%s</strong></td><td>%s</td></tr>`, row[0], row[1]))
 	}
 	tbl.WriteString(`</tbody></table>`)
 

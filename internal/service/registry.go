@@ -178,6 +178,27 @@ func (b *BaseService) DoPut(path string, body any, target any) error {
 	return b.DoRequest(http.MethodPut, path, body, target)
 }
 
+// DoGetRaw performs a GET request and returns the response body as a string.
+func (b *BaseService) DoGetRaw(path string) (string, error) {
+	url := strings.TrimRight(b.Conn.BaseURL, "/") + path
+	resp, err := b.Client.Get(url)
+	if err != nil {
+		return "", fmt.Errorf("connection failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("reading response: %w", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("unexpected status %d: %s", resp.StatusCode, string(body))
+	}
+
+	return string(body), nil
+}
+
 // DoDelete performs a DELETE request.
 func (b *BaseService) DoDelete(path string) error {
 	return b.DoRequest(http.MethodDelete, path, nil, nil)

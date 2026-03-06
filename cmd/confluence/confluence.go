@@ -25,6 +25,7 @@ func init() {
 	Command.AddCommand(pageCreateCmd)
 	Command.AddCommand(pageUpdateCmd)
 	Command.AddCommand(pageChildrenCmd)
+	Command.AddCommand(pageDeleteCmd)
 	Command.AddCommand(publishCmd)
 	Command.AddCommand(setWidthCmd)
 }

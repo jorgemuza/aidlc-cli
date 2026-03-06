@@ -185,6 +185,15 @@ func (c *Client) SetPageWidth(pageID, appearance string) error {
 	return nil
 }
 
+// DeletePage moves a page to the trash.
+func (c *Client) DeletePage(id string) error {
+	path := fmt.Sprintf("%s/content/%s", c.apiPrefix(), url.PathEscape(id))
+	if err := c.DoDelete(path); err != nil {
+		return fmt.Errorf("deleting page %s: %w", id, err)
+	}
+	return nil
+}
+
 // UpdatePage updates an existing page.
 func (c *Client) UpdatePage(id, title, storageBody string, version int) (*Page, error) {
 	req := map[string]any{

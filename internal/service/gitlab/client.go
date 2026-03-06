@@ -145,23 +145,30 @@ type Pipeline struct {
 }
 
 type Job struct {
-	ID         int    `json:"id"`
-	Name       string `json:"name"`
-	Stage      string `json:"stage"`
-	Status     string `json:"status"`
-	Ref        string `json:"ref"`
-	CreatedAt  string `json:"created_at"`
-	StartedAt  string `json:"started_at"`
-	FinishedAt string `json:"finished_at"`
-	Duration   float64 `json:"duration"`
-	WebURL     string `json:"web_url"`
-	Pipeline   *struct {
+	ID              int     `json:"id"`
+	Name            string  `json:"name"`
+	Stage           string  `json:"stage"`
+	Status          string  `json:"status"`
+	Ref             string  `json:"ref"`
+	Tag             bool    `json:"tag"`
+	CreatedAt       string  `json:"created_at"`
+	StartedAt       string  `json:"started_at"`
+	FinishedAt      string  `json:"finished_at"`
+	Duration        float64 `json:"duration"`
+	QueuedDuration  float64 `json:"queued_duration"`
+	FailureReason   string  `json:"failure_reason"`
+	WebURL          string  `json:"web_url"`
+	AllowFailure    bool    `json:"allow_failure"`
+	Pipeline        *struct {
 		ID int `json:"id"`
 	} `json:"pipeline,omitempty"`
 	Runner *struct {
 		ID          int    `json:"id"`
 		Description string `json:"description"`
+		Active      bool   `json:"active"`
+		IsShared    bool   `json:"is_shared"`
 	} `json:"runner,omitempty"`
+	User *User `json:"user,omitempty"`
 }
 
 type Issue struct {
@@ -556,6 +563,151 @@ func (c *Client) ListUsers(search string, perPage int) ([]User, error) {
 		return nil, fmt.Errorf("listing users: %w", err)
 	}
 	return users, nil
+}
+
+// --- Repository file operations ---
+
+func (c *Client) GetFileRaw(projectID, filePath, ref string) (string, error) {
+	path := fmt.Sprintf("%s/projects/%s/repository/files/%s/raw?ref=%s", apiV4, encodeProject(projectID), url.PathEscape(filePath), url.QueryEscape(ref))
+	content, err := c.DoGetRaw(path)
+	if err != nil {
+		return "", fmt.Errorf("getting file %s: %w", filePath, err)
+	}
+	return content, nil
+}
+
+func (c *Client) UpdateFile(projectID, filePath, branch, content, commitMessage string) error {
+	body := map[string]string{
+		"branch":         branch,
+		"content":        content,
+		"commit_message": commitMessage,
+	}
+	return c.DoPut(fmt.Sprintf("%s/projects/%s/repository/files/%s", apiV4, encodeProject(projectID), url.PathEscape(filePath)), body, nil)
+}
+
+// --- Runner operations ---
+
+type Runner struct {
+	ID          int    `json:"id"`
+	Description string `json:"description"`
+	Active      bool   `json:"active"`
+	IsShared    bool   `json:"is_shared"`
+	IPAddress   string `json:"ip_address"`
+	RunnerType  string `json:"runner_type"`
+	Status      string `json:"status"`
+	Online      bool   `json:"online"`
+	TagList     []string `json:"tag_list"`
+}
+
+func (c *Client) ListProjectRunners(projectID string, status string, tagList string, perPage int) ([]Runner, error) {
+	path := fmt.Sprintf("%s/projects/%s/runners?per_page=%d", apiV4, encodeProject(projectID), perPage)
+	if status != "" {
+		path += "&status=" + url.QueryEscape(status)
+	}
+	if tagList != "" {
+		path += "&tag_list=" + url.QueryEscape(tagList)
+	}
+	var runners []Runner
+	if err := c.DoGet(path, &runners); err != nil {
+		return nil, fmt.Errorf("listing project runners: %w", err)
+	}
+	return runners, nil
+}
+
+func (c *Client) GetRunner(runnerID int) (*Runner, error) {
+	var r Runner
+	if err := c.DoGet(fmt.Sprintf("%s/runners/%d", apiV4, runnerID), &r); err != nil {
+		return nil, fmt.Errorf("getting runner: %w", err)
+	}
+	return &r, nil
+}
+
+func (c *Client) EnableProjectRunner(projectID string, runnerID int) (*Runner, error) {
+	var r Runner
+	body := map[string]int{"runner_id": runnerID}
+	if err := c.DoPost(fmt.Sprintf("%s/projects/%s/runners", apiV4, encodeProject(projectID)), body, &r); err != nil {
+		return nil, fmt.Errorf("enabling runner for project: %w", err)
+	}
+	return &r, nil
+}
+
+func (c *Client) DisableProjectRunner(projectID string, runnerID int) error {
+	if err := c.DoDelete(fmt.Sprintf("%s/projects/%s/runners/%d", apiV4, encodeProject(projectID), runnerID)); err != nil {
+		return fmt.Errorf("disabling runner for project: %w", err)
+	}
+	return nil
+}
+
+func (c *Client) ListAllRunners(scope string, status string, tagList string, perPage int) ([]Runner, error) {
+	path := fmt.Sprintf("%s/runners/all?per_page=%d", apiV4, perPage)
+	if scope != "" {
+		path += "&scope=" + url.QueryEscape(scope)
+	}
+	if status != "" {
+		path += "&status=" + url.QueryEscape(status)
+	}
+	if tagList != "" {
+		path += "&tag_list=" + url.QueryEscape(tagList)
+	}
+	var runners []Runner
+	if err := c.DoGet(path, &runners); err != nil {
+		return nil, fmt.Errorf("listing all runners: %w", err)
+	}
+	return runners, nil
+}
+
+// --- Job operations ---
+
+func (c *Client) ListProjectJobs(projectID string, scopes []string, perPage int) ([]Job, error) {
+	path := fmt.Sprintf("%s/projects/%s/jobs?per_page=%d", apiV4, encodeProject(projectID), perPage)
+	for _, s := range scopes {
+		path += "&scope[]=" + url.QueryEscape(s)
+	}
+	var jobs []Job
+	if err := c.DoGet(path, &jobs); err != nil {
+		return nil, fmt.Errorf("listing project jobs: %w", err)
+	}
+	return jobs, nil
+}
+
+func (c *Client) GetJob(projectID string, jobID int) (*Job, error) {
+	var j Job
+	if err := c.DoGet(fmt.Sprintf("%s/projects/%s/jobs/%d", apiV4, encodeProject(projectID), jobID), &j); err != nil {
+		return nil, fmt.Errorf("getting job: %w", err)
+	}
+	return &j, nil
+}
+
+func (c *Client) GetJobLog(projectID string, jobID int) (string, error) {
+	log, err := c.DoGetRaw(fmt.Sprintf("%s/projects/%s/jobs/%d/trace", apiV4, encodeProject(projectID), jobID))
+	if err != nil {
+		return "", fmt.Errorf("getting job log: %w", err)
+	}
+	return log, nil
+}
+
+func (c *Client) RetryJob(projectID string, jobID int) (*Job, error) {
+	var j Job
+	if err := c.DoPost(fmt.Sprintf("%s/projects/%s/jobs/%d/retry", apiV4, encodeProject(projectID), jobID), nil, &j); err != nil {
+		return nil, fmt.Errorf("retrying job: %w", err)
+	}
+	return &j, nil
+}
+
+func (c *Client) CancelJob(projectID string, jobID int) (*Job, error) {
+	var j Job
+	if err := c.DoPost(fmt.Sprintf("%s/projects/%s/jobs/%d/cancel", apiV4, encodeProject(projectID), jobID), nil, &j); err != nil {
+		return nil, fmt.Errorf("canceling job: %w", err)
+	}
+	return &j, nil
+}
+
+func (c *Client) PlayJob(projectID string, jobID int) (*Job, error) {
+	var j Job
+	if err := c.DoPost(fmt.Sprintf("%s/projects/%s/jobs/%d/play", apiV4, encodeProject(projectID), jobID), nil, &j); err != nil {
+		return nil, fmt.Errorf("triggering manual job: %w", err)
+	}
+	return &j, nil
 }
 
 // --- CI/CD Variable operations ---
