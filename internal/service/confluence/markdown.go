@@ -150,7 +150,7 @@ func MarkdownToStorageWithLinks(md string, linkMap map[string]string) string {
 				// First row is header
 				out = append(out, `<table data-layout="full-width"><thead><tr>`)
 				for _, cell := range cells {
-					out = append(out, fmt.Sprintf("<th>%s</th>", inline(cell)))
+					out = append(out, fmt.Sprintf("<th><strong>%s</strong></th>", inline(cell)))
 				}
 				out = append(out, "</tr></thead><tbody>")
 				inTable = true
