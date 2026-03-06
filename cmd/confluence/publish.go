@@ -128,21 +128,14 @@ func publishDir(client *conflsvc.Client, dir, space, parentID, baseURL string, l
 				return fmt.Errorf("converting %s: %w", indexPath, err)
 			}
 
+			page, err := upsertPage(client, space, currentParentID, title, content, pageID)
+			if err != nil {
+				return fmt.Errorf("publishing page from %s: %w", indexPath, err)
+			}
+			currentParentID = page.ID
 			if pageID != "" {
-				// Update existing page
-				page, err := updateExistingPage(client, pageID, title, content)
-				if err != nil {
-					return fmt.Errorf("updating page from %s: %w", indexPath, err)
-				}
-				currentParentID = page.ID
 				fmt.Printf("%s📝 Updated: %s — %s (ID: %s)\n", indent, filepath.Base(dir), title, page.ID)
 			} else {
-				// Create new page
-				page, err := client.CreatePage(space, currentParentID, title, content)
-				if err != nil {
-					return fmt.Errorf("creating page from %s: %w", indexPath, err)
-				}
-				currentParentID = page.ID
 				fmt.Printf("%s✅ Created: %s — %s (ID: %s)\n", indent, filepath.Base(dir), title, page.ID)
 				// Write page ID and URL back to frontmatter
 				updateFrontmatter(indexPath, page.ID, buildPageURL(baseURL, space, page.ID, title))
@@ -188,19 +181,13 @@ func publishDir(client *conflsvc.Client, dir, space, parentID, baseURL string, l
 				return fmt.Errorf("converting %s: %w", filePath, err)
 			}
 
+			page, err := upsertPage(client, space, currentParentID, title, content, pageID)
+			if err != nil {
+				return fmt.Errorf("publishing page from %s: %w", filePath, err)
+			}
 			if pageID != "" {
-				// Update existing page
-				page, err := updateExistingPage(client, pageID, title, content)
-				if err != nil {
-					return fmt.Errorf("updating page from %s: %w", filePath, err)
-				}
 				fmt.Printf("%s  📝 Updated: %s — %s (ID: %s)\n", indent, entry.Name(), title, page.ID)
 			} else {
-				// Create new page
-				page, err := client.CreatePage(space, currentParentID, title, content)
-				if err != nil {
-					return fmt.Errorf("creating page from %s: %w", filePath, err)
-				}
 				fmt.Printf("%s  ✅ Created: %s — %s (ID: %s)\n", indent, entry.Name(), title, page.ID)
 				// Write page ID and URL back to frontmatter
 				updateFrontmatter(filePath, page.ID, buildPageURL(baseURL, space, page.ID, title))
@@ -222,6 +209,29 @@ func updateExistingPage(client *conflsvc.Client, pageID, title, content string) 
 		newVersion = existing.Version.Number + 1
 	}
 	return client.UpdatePage(pageID, title, content, newVersion)
+}
+
+// upsertPage creates or updates a Confluence page. If pageID is set, it updates.
+// If pageID is empty, it searches by title in the space — if found, updates the
+// existing page; otherwise creates a new one.
+func upsertPage(client *conflsvc.Client, space, parentID, title, content, pageID string) (*conflsvc.Page, error) {
+	if pageID != "" {
+		return updateExistingPage(client, pageID, title, content)
+	}
+
+	// Search for existing page by title in the space
+	existing, err := client.FindPageByTitle(space, title)
+	if err != nil {
+		// Search failed — fall through to create
+		fmt.Printf("    (search failed: %v, will create new page)\n", err)
+	}
+	if existing != nil {
+		// Page exists — update it
+		return updateExistingPage(client, existing.ID, title, content)
+	}
+
+	// No existing page — create new
+	return client.CreatePage(space, parentID, title, content)
 }
 
 // titleFromMarkdown extracts a title from a markdown file.

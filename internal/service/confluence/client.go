@@ -81,6 +81,27 @@ type ChildrenResult struct {
 	Size    int    `json:"size"`
 }
 
+// SearchResult is the response from a CQL search.
+type SearchResult struct {
+	Results []Page `json:"results"`
+	Size    int    `json:"size"`
+}
+
+// FindPageByTitle searches for a page by exact title within a space.
+// Returns nil if no page is found.
+func (c *Client) FindPageByTitle(spaceKey, title string) (*Page, error) {
+	cql := fmt.Sprintf(`space="%s" AND title="%s" AND type=page`, spaceKey, title)
+	path := fmt.Sprintf("%s/content?cql=%s&expand=version,space", c.apiPrefix(), url.QueryEscape(cql))
+	var result SearchResult
+	if err := c.DoGet(path, &result); err != nil {
+		return nil, fmt.Errorf("searching for page %q: %w", title, err)
+	}
+	if result.Size == 0 {
+		return nil, nil
+	}
+	return &result.Results[0], nil
+}
+
 // GetPage fetches a page by ID with body content.
 func (c *Client) GetPage(id string) (*Page, error) {
 	path := fmt.Sprintf("%s/content/%s?expand=body.storage,version,space", c.apiPrefix(), url.PathEscape(id))
