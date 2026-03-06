@@ -8,10 +8,17 @@ Secrets can be stored as [1Password](https://1password.com/) references (`op://v
 
 ## Install
 
-### Homebrew
+### MacOS - Homebrew
 
 ```bash
 brew install jorgemuza/tap/aidlc
+```
+
+### Windows - Scoop
+
+```bash
+  scoop bucket add jorgemuza https://github.com/jorgemuza/scoop-bucket
+  scoop install aidlc
 ```
 
 ### From source
