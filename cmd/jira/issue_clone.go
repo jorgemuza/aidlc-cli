@@ -16,9 +16,9 @@ var issueCloneCmd = &cobra.Command{
 	Use:   "clone [issue-key]",
 	Short: "Clone an issue with optional modifications",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc jira issue clone PROJ-123
-  aidlc jira issue clone PROJ-123 --summary "Cloned: new title"
-  aidlc jira issue clone PROJ-123 --replace "v1:v2"`,
+	Example: `  orbit jira issue clone PROJ-123
+  orbit jira issue clone PROJ-123 --summary "Cloned: new title"
+  orbit jira issue clone PROJ-123 --replace "v1:v2"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

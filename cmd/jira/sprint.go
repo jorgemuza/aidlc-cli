@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/output"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/output"
 	"github.com/spf13/cobra"
 )
 
@@ -28,9 +28,9 @@ var sprintListCmd = &cobra.Command{
 	Aliases: []string{"ls"},
 	Short:   "List sprints or issues in a sprint",
 	Args:    cobra.MaximumNArgs(1),
-	Example: `  aidlc jira sprint list --board-id 42
-  aidlc jira sprint list 123
-  aidlc jira sprint list --board-id 42 --state active`,
+	Example: `  orbit jira sprint list --board-id 42
+  orbit jira sprint list 123
+  orbit jira sprint list --board-id 42 --state active`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {
@@ -96,7 +96,7 @@ var sprintAddCmd = &cobra.Command{
 	Use:   "add [sprint-id] [issue-keys...]",
 	Short: "Add issues to a sprint (max 50)",
 	Args:  cobra.MinimumNArgs(2),
-	Example: `  aidlc jira sprint add 42 PROJ-101 PROJ-102`,
+	Example: `  orbit jira sprint add 42 PROJ-101 PROJ-102`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

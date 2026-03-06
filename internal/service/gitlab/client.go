@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/jorgemuza/aidlc-cli/internal/service"
+	"github.com/jorgemuza/orbit/internal/service"
 )
 
 // Client provides GitLab REST API operations.

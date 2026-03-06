@@ -11,8 +11,8 @@ var pageViewCmd = &cobra.Command{
 	Use:   "page [page-id]",
 	Short: "View a Confluence page",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc confluence page 12345
-  aidlc confluence page 12345 -o json`,
+	Example: `  orbit confluence page 12345
+  orbit confluence page 12345 -o json`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveConfluenceClient(cmd)
 		if err != nil {
@@ -48,7 +48,7 @@ var pageChildrenCmd = &cobra.Command{
 	Use:   "children [page-id]",
 	Short: "List child pages of a Confluence page",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc confluence children 12345`,
+	Example: `  orbit confluence children 12345`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveConfluenceClient(cmd)
 		if err != nil {
@@ -83,8 +83,8 @@ var pageChildrenCmd = &cobra.Command{
 var pageCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new Confluence page",
-	Example: `  aidlc confluence create --space FO --parent 12345 --title "My Page" --body "<p>Hello</p>"
-  aidlc confluence create --space FO --parent 12345 --title "My Page" --file doc.md`,
+	Example: `  orbit confluence create --space FO --parent 12345 --title "My Page" --body "<p>Hello</p>"
+  orbit confluence create --space FO --parent 12345 --title "My Page" --file doc.md`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveConfluenceClient(cmd)
 		if err != nil {
@@ -122,8 +122,8 @@ var pageUpdateCmd = &cobra.Command{
 	Use:   "update [page-id]",
 	Short: "Update an existing Confluence page",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc confluence update 12345 --title "New Title" --body "<p>Updated</p>"
-  aidlc confluence update 12345 --file doc.md`,
+	Example: `  orbit confluence update 12345 --title "New Title" --body "<p>Updated</p>"
+  orbit confluence update 12345 --file doc.md`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveConfluenceClient(cmd)
 		if err != nil {
@@ -166,7 +166,7 @@ var pageDeleteCmd = &cobra.Command{
 	Use:   "delete [page-id]",
 	Short: "Delete a Confluence page (moves to trash)",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc confluence delete 12345`,
+	Example: `  orbit confluence delete 12345`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveConfluenceClient(cmd)
 		if err != nil {

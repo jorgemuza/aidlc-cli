@@ -3,7 +3,7 @@ package confluence
 import (
 	"fmt"
 
-	conflsvc "github.com/jorgemuza/aidlc-cli/internal/service/confluence"
+	conflsvc "github.com/jorgemuza/orbit/internal/service/confluence"
 	"github.com/spf13/cobra"
 )
 
@@ -11,9 +11,9 @@ var setWidthCmd = &cobra.Command{
 	Use:   "set-width [page-id...]",
 	Short: "Set page width (wide or fixed)",
 	Args:  cobra.MinimumNArgs(1),
-	Example: `  aidlc confluence set-width 12345
-  aidlc confluence set-width 12345 67890 --width fixed
-  aidlc confluence set-width 12345 --recursive`,
+	Example: `  orbit confluence set-width 12345
+  orbit confluence set-width 12345 67890 --width fixed
+  orbit confluence set-width 12345 --recursive`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveConfluenceClient(cmd)
 		if err != nil {

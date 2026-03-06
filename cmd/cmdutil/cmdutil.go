@@ -3,8 +3,8 @@ package cmdutil
 import (
 	"fmt"
 
-	"github.com/jorgemuza/aidlc-cli/internal/config"
-	"github.com/jorgemuza/aidlc-cli/internal/output"
+	"github.com/jorgemuza/orbit/internal/config"
+	"github.com/jorgemuza/orbit/internal/output"
 	"github.com/spf13/cobra"
 )
 

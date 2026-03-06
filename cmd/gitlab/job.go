@@ -21,9 +21,9 @@ var jobListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List jobs in a project",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab job list foundation/ai
-  aidlc gitlab job list foundation/ai --scope running,pending
-  aidlc gitlab job list foundation/ai --scope failed --limit 50`,
+	Example: `  orbit gitlab job list foundation/ai
+  orbit gitlab job list foundation/ai --scope running,pending
+  orbit gitlab job list foundation/ai --scope failed --limit 50`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -79,7 +79,7 @@ var jobViewCmd = &cobra.Command{
 	Use:   "view [project] [job-id]",
 	Short: "View job details",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab job view foundation/ai 12345`,
+	Example: `  orbit gitlab job view foundation/ai 12345`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -148,8 +148,8 @@ var jobLogCmd = &cobra.Command{
 	Short:   "View job log/trace output",
 	Aliases: []string{"trace"},
 	Args:    cobra.ExactArgs(2),
-	Example: `  aidlc gitlab job log foundation/ai 12345
-  aidlc gitlab job log foundation/ai 12345 --tail 50`,
+	Example: `  orbit gitlab job log foundation/ai 12345
+  orbit gitlab job log foundation/ai 12345 --tail 50`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -185,7 +185,7 @@ var jobRetryCmd = &cobra.Command{
 	Use:   "retry [project] [job-id]",
 	Short: "Retry a job",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab job retry foundation/ai 12345`,
+	Example: `  orbit gitlab job retry foundation/ai 12345`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -211,7 +211,7 @@ var jobCancelCmd = &cobra.Command{
 	Use:   "cancel [project] [job-id]",
 	Short: "Cancel a running or pending job",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab job cancel foundation/ai 12345`,
+	Example: `  orbit gitlab job cancel foundation/ai 12345`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -237,7 +237,7 @@ var jobPlayCmd = &cobra.Command{
 	Use:   "play [project] [job-id]",
 	Short: "Trigger a manual job",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab job play foundation/ai 253805`,
+	Example: `  orbit gitlab job play foundation/ai 253805`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

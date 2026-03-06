@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/output"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/output"
 	"github.com/spf13/cobra"
 )
 
@@ -36,9 +36,9 @@ var issueListCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"ls", "search"},
 	Short:   "List issues with filtering",
-	Example: `  aidlc jira issue list --project PROJ
-  aidlc jira issue list --assignee me --status "In Progress"
-  aidlc jira issue list --jql "project = PROJ AND sprint in openSprints()"`,
+	Example: `  orbit jira issue list --project PROJ
+  orbit jira issue list --assignee me --status "In Progress"
+  orbit jira issue list --jql "project = PROJ AND sprint in openSprints()"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

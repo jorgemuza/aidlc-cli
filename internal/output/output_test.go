@@ -3,7 +3,7 @@ package output
 import (
 	"testing"
 
-	"github.com/jorgemuza/aidlc-cli/internal/config"
+	"github.com/jorgemuza/orbit/internal/config"
 )
 
 func TestParseFormat(t *testing.T) {

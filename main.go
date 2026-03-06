@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jorgemuza/aidlc-cli/cmd"
+	"github.com/jorgemuza/orbit/cmd"
 )
 
 var (

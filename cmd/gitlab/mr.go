@@ -22,9 +22,9 @@ var mrListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List merge requests",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab mr list 595
-  aidlc gitlab mr list 595 --state opened
-  aidlc gitlab mr list 595 --state merged`,
+	Example: `  orbit gitlab mr list 595
+  orbit gitlab mr list 595 --state opened
+  orbit gitlab mr list 595 --state merged`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -70,7 +70,7 @@ var mrViewCmd = &cobra.Command{
 	Use:   "view [project] [mr-iid]",
 	Short: "View a merge request",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab mr view 595 42`,
+	Example: `  orbit gitlab mr view 595 42`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -123,7 +123,7 @@ var mrCreateCmd = &cobra.Command{
 	Use:   "create [project]",
 	Short: "Create a merge request",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab mr create 595 --source feature/x --target main --title "Add feature X"`,
+	Example: `  orbit gitlab mr create 595 --source feature/x --target main --title "Add feature X"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -150,8 +150,8 @@ var mrMergeCmd = &cobra.Command{
 	Use:   "merge [project] [mr-iid]",
 	Short: "Merge a merge request",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab mr merge 595 42
-  aidlc gitlab mr merge 595 42 --squash`,
+	Example: `  orbit gitlab mr merge 595 42
+  orbit gitlab mr merge 595 42 --squash`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -178,7 +178,7 @@ var mrCommentCmd = &cobra.Command{
 	Use:   "comment [project] [mr-iid]",
 	Short: "Add a comment to a merge request",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab mr comment 595 42 --body "LGTM!"`,
+	Example: `  orbit gitlab mr comment 595 42 --body "LGTM!"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -205,7 +205,7 @@ var mrNotesCmd = &cobra.Command{
 	Use:   "notes [project] [mr-iid]",
 	Short: "List comments on a merge request",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab mr notes 595 42`,
+	Example: `  orbit gitlab mr notes 595 42`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

@@ -19,7 +19,7 @@ var tagListCmd = &cobra.Command{
 	Use:   "list [project-key] [repo-slug]",
 	Short: "List tags",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc bb tag list L3SUP agents-sre`,
+	Example: `  orbit bb tag list L3SUP agents-sre`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -57,7 +57,7 @@ var tagCreateCmd = &cobra.Command{
 	Use:   "create [project-key] [repo-slug] [tag-name] [start-point]",
 	Short: "Create a tag",
 	Args:  cobra.ExactArgs(4),
-	Example: `  aidlc bb tag create L3SUP agents-sre v1.0.0 main`,
+	Example: `  orbit bb tag create L3SUP agents-sre v1.0.0 main`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {

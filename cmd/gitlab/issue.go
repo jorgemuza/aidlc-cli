@@ -21,8 +21,8 @@ var issueListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List issues",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab issue list 595
-  aidlc gitlab issue list 595 --state opened --labels bug`,
+	Example: `  orbit gitlab issue list 595
+  orbit gitlab issue list 595 --state opened --labels bug`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -71,7 +71,7 @@ var issueViewCmd = &cobra.Command{
 	Use:   "view [project] [issue-iid]",
 	Short: "View an issue",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab issue view 595 1`,
+	Example: `  orbit gitlab issue view 595 1`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -129,7 +129,7 @@ var issueCreateCmd = &cobra.Command{
 	Use:   "create [project]",
 	Short: "Create an issue",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab issue create 595 --title "Fix login bug" --labels bug,urgent`,
+	Example: `  orbit gitlab issue create 595 --title "Fix login bug" --labels bug,urgent`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -160,7 +160,7 @@ var issueCloseCmd = &cobra.Command{
 	Use:   "close [project] [issue-iid]",
 	Short: "Close an issue",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab issue close 595 1`,
+	Example: `  orbit gitlab issue close 595 1`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

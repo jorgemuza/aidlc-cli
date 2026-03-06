@@ -15,8 +15,8 @@ var issueDeleteCmd = &cobra.Command{
 	Aliases: []string{"rm", "remove"},
 	Short:   "Delete an issue",
 	Args:    cobra.ExactArgs(1),
-	Example: `  aidlc jira issue delete PROJ-123
-  aidlc jira issue delete PROJ-123 --cascade`,
+	Example: `  orbit jira issue delete PROJ-123
+  orbit jira issue delete PROJ-123 --cascade`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

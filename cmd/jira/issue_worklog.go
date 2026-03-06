@@ -14,8 +14,8 @@ var issueWorklogCmd = &cobra.Command{
 	Use:   "worklog [issue-key] [time-spent]",
 	Short: "Log time spent on an issue",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc jira issue worklog PROJ-123 "2h 30m"
-  aidlc jira issue worklog PROJ-123 "1d" --comment "Code review"`,
+	Example: `  orbit jira issue worklog PROJ-123 "2h 30m"
+  orbit jira issue worklog PROJ-123 "1d" --comment "Code review"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

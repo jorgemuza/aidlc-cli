@@ -19,7 +19,7 @@ var tagListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List tags",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab tag list 595`,
+	Example: `  orbit gitlab tag list 595`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -56,8 +56,8 @@ var tagCreateCmd = &cobra.Command{
 	Use:   "create [project] [tag-name] [ref]",
 	Short: "Create a tag",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc gitlab tag create 595 v1.0.0 main
-  aidlc gitlab tag create 595 v1.0.0 main --message "Release v1.0.0"`,
+	Example: `  orbit gitlab tag create 595 v1.0.0 main
+  orbit gitlab tag create 595 v1.0.0 main --message "Release v1.0.0"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

@@ -1,6 +1,6 @@
 version: 2
 
-project_name: aidlc
+project_name: orbit
 
 before:
   hooks:
@@ -37,20 +37,20 @@ brews:
       owner: jorgemuza
       name: homebrew-tap
       token: "{{ .Env.HOMEBREW_TAP_GITHUB_TOKEN }}"
-    homepage: "https://github.com/jorgemuza/aidlc-cli"
+    homepage: "https://github.com/jorgemuza/orbit-cli"
     description: "CLI for managing connections to development lifecycle services"
     license: "MIT"
     install: |
-      bin.install "aidlc"
+      bin.install "orbit"
     test: |
-      system "#{bin}/aidlc", "version"
+      system "#{bin}/orbit", "version"
 
 scoops:
   - repository:
       owner: jorgemuza
       name: scoop-bucket
       token: "{{ .Env.SCOOP_BUCKET_GITHUB_TOKEN }}"
-    homepage: "https://github.com/jorgemuza/aidlc-cli"
+    homepage: "https://github.com/jorgemuza/orbit-cli"
     description: "CLI for managing connections to development lifecycle services"
     license: "MIT"
 

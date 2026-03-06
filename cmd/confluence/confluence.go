@@ -1,10 +1,10 @@
 package confluence
 
 import (
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/config"
-	"github.com/jorgemuza/aidlc-cli/internal/service"
-	conflsvc "github.com/jorgemuza/aidlc-cli/internal/service/confluence"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/config"
+	"github.com/jorgemuza/orbit/internal/service"
+	conflsvc "github.com/jorgemuza/orbit/internal/service/confluence"
 	"github.com/spf13/cobra"
 )
 

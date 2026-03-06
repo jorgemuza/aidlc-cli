@@ -10,7 +10,7 @@ var issueUnlinkCmd = &cobra.Command{
 	Use:   "unlink [inward-key] [outward-key]",
 	Short: "Remove a link between two issues",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc jira issue unlink PROJ-100 PROJ-200`,
+	Example: `  orbit jira issue unlink PROJ-100 PROJ-200`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

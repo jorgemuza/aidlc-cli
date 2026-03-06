@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/output"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/output"
 	"github.com/spf13/cobra"
 )
 
@@ -28,8 +28,8 @@ var epicListCmd = &cobra.Command{
 	Aliases: []string{"ls"},
 	Short:   "List epics or issues within an epic",
 	Args:    cobra.MaximumNArgs(1),
-	Example: `  aidlc jira epic list --project PROJ
-  aidlc jira epic list PROJ-50`,
+	Example: `  orbit jira epic list --project PROJ
+  orbit jira epic list PROJ-50`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {
@@ -112,7 +112,7 @@ var epicCreateOpts struct {
 var epicCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new epic",
-	Example: `  aidlc jira epic create --project PROJ --name "Q1 Auth" --summary "Revamp auth system"`,
+	Example: `  orbit jira epic create --project PROJ --name "Q1 Auth" --summary "Revamp auth system"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Epic create is just issue create with type=Epic
 		issueCreateOpts.project = epicCreateOpts.project
@@ -133,7 +133,7 @@ var epicAddCmd = &cobra.Command{
 	Use:   "add [epic-key] [issue-keys...]",
 	Short: "Add issues to an epic (max 50)",
 	Args:  cobra.MinimumNArgs(2),
-	Example: `  aidlc jira epic add PROJ-50 PROJ-101 PROJ-102 PROJ-103`,
+	Example: `  orbit jira epic add PROJ-50 PROJ-101 PROJ-102 PROJ-103`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {
@@ -159,7 +159,7 @@ var epicRemoveCmd = &cobra.Command{
 	Use:   "remove [issue-keys...]",
 	Short: "Remove issues from their epic (max 50)",
 	Args:  cobra.MinimumNArgs(1),
-	Example: `  aidlc jira epic remove PROJ-101 PROJ-102`,
+	Example: `  orbit jira epic remove PROJ-101 PROJ-102`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

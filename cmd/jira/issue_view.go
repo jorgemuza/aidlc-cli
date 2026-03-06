@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/output"
-	jirasvc "github.com/jorgemuza/aidlc-cli/internal/service/jira"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/output"
+	jirasvc "github.com/jorgemuza/orbit/internal/service/jira"
 	"github.com/spf13/cobra"
 )
 
@@ -19,9 +19,9 @@ var issueViewCmd = &cobra.Command{
 	Aliases: []string{"show"},
 	Short:   "View issue details",
 	Args:    cobra.ExactArgs(1),
-	Example: `  aidlc jira issue view PROJ-123
-  aidlc jira issue view PROJ-123 --comments 5
-  aidlc jira issue view PROJ-123 -o json`,
+	Example: `  orbit jira issue view PROJ-123
+  orbit jira issue view PROJ-123 --comments 5
+  orbit jira issue view PROJ-123 -o json`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

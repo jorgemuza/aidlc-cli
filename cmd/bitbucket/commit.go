@@ -20,8 +20,8 @@ var commitListCmd = &cobra.Command{
 	Use:   "list [project-key] [repo-slug]",
 	Short: "List recent commits",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc bb commit list L3SUP agents-sre
-  aidlc bb commit list L3SUP agents-sre --branch main`,
+	Example: `  orbit bb commit list L3SUP agents-sre
+  orbit bb commit list L3SUP agents-sre --branch main`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -71,7 +71,7 @@ var commitViewCmd = &cobra.Command{
 	Use:   "view [project-key] [repo-slug] [commit-id]",
 	Short: "View a commit",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc bb commit view L3SUP agents-sre abc1234`,
+	Example: `  orbit bb commit view L3SUP agents-sre abc1234`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {

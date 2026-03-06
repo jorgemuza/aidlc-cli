@@ -23,8 +23,8 @@ var prListCmd = &cobra.Command{
 	Use:   "list [project-key] [repo-slug]",
 	Short: "List pull requests",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc bb pr list L3SUP agents-sre
-  aidlc bb pr list L3SUP agents-sre --state merged`,
+	Example: `  orbit bb pr list L3SUP agents-sre
+  orbit bb pr list L3SUP agents-sre --state merged`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -66,7 +66,7 @@ var prViewCmd = &cobra.Command{
 	Use:   "view [project-key] [repo-slug] [pr-id]",
 	Short: "View a pull request",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc bb pr view L3SUP agents-sre 42`,
+	Example: `  orbit bb pr view L3SUP agents-sre 42`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -133,7 +133,7 @@ var prCreateCmd = &cobra.Command{
 	Use:   "create [project-key] [repo-slug]",
 	Short: "Create a pull request",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc bb pr create L3SUP agents-sre \
+	Example: `  orbit bb pr create L3SUP agents-sre \
     --from feature/new --to main --title "Add new feature"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
@@ -169,7 +169,7 @@ var prMergeCmd = &cobra.Command{
 	Use:   "merge [project-key] [repo-slug] [pr-id]",
 	Short: "Merge a pull request",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc bb pr merge L3SUP agents-sre 42`,
+	Example: `  orbit bb pr merge L3SUP agents-sre 42`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -201,7 +201,7 @@ var prDeclineCmd = &cobra.Command{
 	Use:   "decline [project-key] [repo-slug] [pr-id]",
 	Short: "Decline a pull request",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc bb pr decline L3SUP agents-sre 42`,
+	Example: `  orbit bb pr decline L3SUP agents-sre 42`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -232,7 +232,7 @@ var prCommentCmd = &cobra.Command{
 	Use:   "comment [project-key] [repo-slug] [pr-id]",
 	Short: "Add a comment to a pull request",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc bb pr comment L3SUP agents-sre 42 --body "LGTM!"`,
+	Example: `  orbit bb pr comment L3SUP agents-sre 42 --body "LGTM!"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -259,7 +259,7 @@ var prActivityCmd = &cobra.Command{
 	Use:   "activity [project-key] [repo-slug] [pr-id]",
 	Short: "List pull request activity (comments, approvals, etc.)",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc bb pr activity L3SUP agents-sre 42`,
+	Example: `  orbit bb pr activity L3SUP agents-sre 42`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {

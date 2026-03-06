@@ -1,10 +1,10 @@
 package jira
 
 import (
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/config"
-	"github.com/jorgemuza/aidlc-cli/internal/service"
-	jirasvc "github.com/jorgemuza/aidlc-cli/internal/service/jira"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/config"
+	"github.com/jorgemuza/orbit/internal/service"
+	jirasvc "github.com/jorgemuza/orbit/internal/service/jira"
 	"github.com/spf13/cobra"
 )
 

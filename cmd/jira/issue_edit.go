@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	jirasvc "github.com/jorgemuza/aidlc-cli/internal/service/jira"
+	jirasvc "github.com/jorgemuza/orbit/internal/service/jira"
 	"github.com/spf13/cobra"
 )
 
@@ -22,9 +22,9 @@ var issueEditCmd = &cobra.Command{
 	Aliases: []string{"update"},
 	Short:   "Edit an existing issue",
 	Args:    cobra.ExactArgs(1),
-	Example: `  aidlc jira issue edit PROJ-123 --summary "Updated title"
-  aidlc jira issue edit PROJ-123 --priority Critical
-  aidlc jira issue edit PROJ-123 --label new-label --label -old-label`,
+	Example: `  orbit jira issue edit PROJ-123 --summary "Updated title"
+  orbit jira issue edit PROJ-123 --priority Critical
+  orbit jira issue edit PROJ-123 --label new-label --label -old-label`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

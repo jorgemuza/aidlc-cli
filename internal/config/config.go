@@ -14,6 +14,7 @@ const (
 	ServiceTypeConfluence = "confluence"
 	ServiceTypeGitLab     = "gitlab"
 	ServiceTypeBitbucket  = "bitbucket"
+	ServiceTypeGitHub     = "github"
 )
 
 // Variant constants.
@@ -29,7 +30,7 @@ const (
 	AuthMethodOAuth2 = "oauth2"
 )
 
-var supportedServiceTypes = []string{ServiceTypeJira, ServiceTypeConfluence, ServiceTypeGitLab, ServiceTypeBitbucket}
+var supportedServiceTypes = []string{ServiceTypeJira, ServiceTypeConfluence, ServiceTypeGitLab, ServiceTypeBitbucket, ServiceTypeGitHub}
 
 // SupportedServiceTypes returns the list of service types the CLI supports.
 func SupportedServiceTypes() []string {
@@ -70,14 +71,14 @@ type Profile struct {
 	Services    []ServiceConnection `yaml:"services"`
 }
 
-// configFilePath returns the default config file path (~/.config/aidlc/config.yaml).
+// configFilePath returns the default config file path (~/.config/orbit/config.yaml).
 // We always use ~/.config to be consistent across platforms and match the documented path.
 func configFilePath() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
 		return "", fmt.Errorf("cannot determine home directory: %w", err)
 	}
-	return filepath.Join(home, ".config", "aidlc", "config.yaml"), nil
+	return filepath.Join(home, ".config", "orbit", "config.yaml"), nil
 }
 
 // Load reads the config from the default path or the given override path.
@@ -241,7 +242,7 @@ func (c *Config) ResolveProfile(name string) (*Profile, error) {
 	}
 	p := c.DefaultProfile()
 	if p == nil {
-		return nil, fmt.Errorf("no profiles configured; run 'aidlc profile create' first")
+		return nil, fmt.Errorf("no profiles configured; run 'orbit profile create' first")
 	}
 	return p, nil
 }

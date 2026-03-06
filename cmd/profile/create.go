@@ -3,8 +3,8 @@ package profile
 import (
 	"fmt"
 
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/config"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +18,7 @@ var createCmd = &cobra.Command{
 	Use:     "create",
 	Aliases: []string{"add", "new"},
 	Short:   "Create a new profile",
-	Example: `  aidlc profile create --name project-a --description "Project A services" --default`,
+	Example: `  orbit profile create --name project-a --description "Project A services" --default`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg, err := cmdutil.LoadConfig(cmd)
 		if err != nil {

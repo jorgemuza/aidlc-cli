@@ -1,6 +1,6 @@
 # Bitbucket CLI Command Reference
 
-Complete reference for all `aidlc bitbucket` (alias: `bb`) commands and flags.
+Complete reference for all `orbit bitbucket` (alias: `bb`) commands and flags.
 
 ## Table of Contents
 
@@ -31,7 +31,7 @@ These flags apply to all bitbucket commands:
 View a single project.
 
 ```
-aidlc -p myprofile bb project view L3SUP
+orbit -p myprofile bb project view L3SUP
 ```
 
 **Output fields:** Key, Name, Description, Public, Type
@@ -53,7 +53,7 @@ List all projects.
 View repository details including clone URLs.
 
 ```
-aidlc -p myprofile bb repo view L3SUP agents-sre
+orbit -p myprofile bb repo view L3SUP agents-sre
 ```
 
 **Output fields:** ID, Slug, Name, Description, State, SCM, Forkable, Project, Clone URLs
@@ -88,7 +88,7 @@ Show the default branch.
 Create a branch from a ref (branch name, tag, or commit SHA).
 
 ```
-aidlc -p myprofile bb branch create L3SUP agents-sre feature/new-thing main
+orbit -p myprofile bb branch create L3SUP agents-sre feature/new-thing main
 ```
 
 ### `bitbucket branch delete <project-key> <repo-slug> <branch-name>`
@@ -96,7 +96,7 @@ aidlc -p myprofile bb branch create L3SUP agents-sre feature/new-thing main
 Delete a branch.
 
 ```
-aidlc -p myprofile bb branch delete L3SUP agents-sre feature/old-thing
+orbit -p myprofile bb branch delete L3SUP agents-sre feature/old-thing
 ```
 
 ---
@@ -121,7 +121,7 @@ Create a tag from a ref.
 | `-m, --message <text>` | Tag message (annotated tag) |
 
 ```
-aidlc -p myprofile bb tag create L3SUP agents-sre v1.0.0 main -m "Release v1.0.0"
+orbit -p myprofile bb tag create L3SUP agents-sre v1.0.0 main -m "Release v1.0.0"
 ```
 
 ---
@@ -142,7 +142,7 @@ List recent commits.
 View a commit's details.
 
 ```
-aidlc -p myprofile bb commit view L3SUP agents-sre abc1234def5678
+orbit -p myprofile bb commit view L3SUP agents-sre abc1234def5678
 ```
 
 **Output fields:** ID, Author, Date, Message
@@ -183,7 +183,7 @@ Create a pull request.
 | `--reviewers <slugs>` | No | Comma-separated reviewer usernames |
 
 ```
-aidlc -p myprofile bb pr create L3SUP agents-sre \
+orbit -p myprofile bb pr create L3SUP agents-sre \
   --from feature/new --to main --title "Add new feature" \
   --reviewers john.doe,jane.smith
 ```

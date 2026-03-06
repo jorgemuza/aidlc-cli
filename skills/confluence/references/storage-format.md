@@ -1,6 +1,6 @@
 # Confluence Storage Format Reference
 
-Confluence stores page content in an XHTML-based format called "storage format". When using `--body` directly (without `--file`), you need to provide content in this format. When using `--file` with a `.md` file, the aidlc CLI converts markdown to storage format automatically.
+Confluence stores page content in an XHTML-based format called "storage format". When using `--body` directly (without `--file`), you need to provide content in this format. When using `--file` with a `.md` file, the orbit CLI converts markdown to storage format automatically.
 
 ## Basic Elements
 
@@ -145,7 +145,7 @@ Colors: Grey, Red, Yellow, Green, Blue
 
 ## What the Markdown Converter Does
 
-When you use `--file` with a markdown file, the aidlc CLI:
+When you use `--file` with a markdown file, the orbit CLI:
 
 1. **Strips YAML frontmatter** — The `---` delimited block at the top is removed
 2. **Skips first h1** — The first `# Heading` is dropped since Confluence displays the page title

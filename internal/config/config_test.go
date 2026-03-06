@@ -252,8 +252,8 @@ func TestRemoveServiceNotFound(t *testing.T) {
 
 func TestSupportedServiceTypes(t *testing.T) {
 	types := SupportedServiceTypes()
-	if len(types) != 4 {
-		t.Fatalf("expected 4 service types, got %d", len(types))
+	if len(types) != 5 {
+		t.Fatalf("expected 5 service types, got %d", len(types))
 	}
 }
 

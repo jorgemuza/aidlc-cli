@@ -3,8 +3,8 @@ package confluence
 import (
 	"fmt"
 
-	"github.com/jorgemuza/aidlc-cli/internal/config"
-	"github.com/jorgemuza/aidlc-cli/internal/service"
+	"github.com/jorgemuza/orbit/internal/config"
+	"github.com/jorgemuza/orbit/internal/service"
 )
 
 func init() {

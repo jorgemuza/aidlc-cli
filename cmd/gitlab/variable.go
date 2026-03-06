@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	glsvc "github.com/jorgemuza/aidlc-cli/internal/service/gitlab"
+	glsvc "github.com/jorgemuza/orbit/internal/service/gitlab"
 	"github.com/spf13/cobra"
 )
 
@@ -21,8 +21,8 @@ var variableListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List CI/CD variables",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab variable list foundation/ai
-  aidlc gitlab variable list 650`,
+	Example: `  orbit gitlab variable list foundation/ai
+  orbit gitlab variable list 650`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -55,7 +55,7 @@ var variableGetCmd = &cobra.Command{
 	Use:   "get [project] [key]",
 	Short: "Get a CI/CD variable",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab variable get foundation/ai CONFLUENCE_USERNAME`,
+	Example: `  orbit gitlab variable get foundation/ai CONFLUENCE_USERNAME`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -88,8 +88,8 @@ var variableSetCmd = &cobra.Command{
 	Use:   "set [project] [key] [value]",
 	Short: "Create or update a CI/CD variable",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc gitlab variable set foundation/ai MY_VAR "my-value"
-  aidlc gitlab variable set foundation/ai MY_VAR "secret" --masked --protected`,
+	Example: `  orbit gitlab variable set foundation/ai MY_VAR "my-value"
+  orbit gitlab variable set foundation/ai MY_VAR "secret" --masked --protected`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -129,7 +129,7 @@ var variableDeleteCmd = &cobra.Command{
 	Use:   "delete [project] [key]",
 	Short: "Delete a CI/CD variable",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab variable delete foundation/ai MY_VAR`,
+	Example: `  orbit gitlab variable delete foundation/ai MY_VAR`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

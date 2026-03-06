@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jorgemuza/aidlc-cli/internal/config"
-	"github.com/jorgemuza/aidlc-cli/internal/secrets"
+	"github.com/jorgemuza/orbit/internal/config"
+	"github.com/jorgemuza/orbit/internal/secrets"
 )
 
 // Service is the interface that all service integrations must implement.

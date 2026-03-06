@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/output"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/output"
 	"github.com/spf13/cobra"
 )
 

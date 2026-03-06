@@ -19,8 +19,8 @@ var branchListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List branches",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab branch list 595
-  aidlc gitlab branch list schools/frontend/schools-frontend-backoffice --search main`,
+	Example: `  orbit gitlab branch list 595
+  orbit gitlab branch list schools/frontend/schools-frontend-backoffice --search main`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -58,7 +58,7 @@ var branchViewCmd = &cobra.Command{
 	Use:   "view [project] [branch]",
 	Short: "View a branch",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab branch view 595 main`,
+	Example: `  orbit gitlab branch view 595 main`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -94,7 +94,7 @@ var branchCreateCmd = &cobra.Command{
 	Use:   "create [project] [name] [ref]",
 	Short: "Create a branch",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc gitlab branch create 595 feature/new-feature main`,
+	Example: `  orbit gitlab branch create 595 feature/new-feature main`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -115,7 +115,7 @@ var branchDeleteCmd = &cobra.Command{
 	Use:   "delete [project] [branch]",
 	Short: "Delete a branch",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab branch delete 595 feature/old-feature`,
+	Example: `  orbit gitlab branch delete 595 feature/old-feature`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

@@ -10,8 +10,8 @@ var issueAssignCmd = &cobra.Command{
 	Use:   "assign [issue-key] [assignee]",
 	Short: "Assign or unassign an issue",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc jira issue assign PROJ-123 john
-  aidlc jira issue assign PROJ-123 x   # unassign`,
+	Example: `  orbit jira issue assign PROJ-123 john
+  orbit jira issue assign PROJ-123 x   # unassign`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

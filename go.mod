@@ -1,4 +1,4 @@
-module github.com/jorgemuza/aidlc-cli
+module github.com/jorgemuza/orbit
 
 go 1.25.0
 

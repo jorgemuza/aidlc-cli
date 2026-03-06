@@ -11,8 +11,8 @@ var issueCommentCmd = &cobra.Command{
 	Use:   "comment [issue-key] [body...]",
 	Short: "Add a comment to an issue",
 	Args:  cobra.MinimumNArgs(2),
-	Example: `  aidlc jira issue comment PROJ-123 "This is fixed now"
-  aidlc jira issue comment PROJ-123 "Looks good to me"`,
+	Example: `  orbit jira issue comment PROJ-123 "This is fixed now"
+  orbit jira issue comment PROJ-123 "Looks good to me"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

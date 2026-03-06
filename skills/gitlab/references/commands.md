@@ -1,6 +1,6 @@
 # GitLab CLI Command Reference
 
-Complete reference for all `aidlc gitlab` (alias: `gl`) commands and flags.
+Complete reference for all `orbit gitlab` (alias: `gl`) commands and flags.
 
 ## Table of Contents
 
@@ -34,8 +34,8 @@ These flags apply to all gitlab commands:
 View a single project.
 
 ```
-aidlc -p myprofile gl project 595
-aidlc -p myprofile gl project schools/frontend/my-app
+orbit -p myprofile gl project 595
+orbit -p myprofile gl project schools/frontend/my-app
 ```
 
 **Output fields:** ID, Name, Path, Description, Default Branch, Visibility, URL, Last Activity
@@ -51,8 +51,8 @@ List projects.
 | `--limit <n>` | 50 | Max results |
 
 ```
-aidlc -p myprofile gl projects --search frontend
-aidlc -p myprofile gl projects --group schools/frontend
+orbit -p myprofile gl projects --search frontend
+orbit -p myprofile gl projects --group schools/frontend
 ```
 
 ---
@@ -64,7 +64,7 @@ aidlc -p myprofile gl projects --group schools/frontend
 View group details.
 
 ```
-aidlc -p myprofile gl group view schools/frontend
+orbit -p myprofile gl group view schools/frontend
 ```
 
 ### `gitlab group list`
@@ -106,7 +106,7 @@ View branch details including latest commit.
 Create a branch from a ref (branch name, tag, or SHA).
 
 ```
-aidlc -p myprofile gl branch create 595 feature/new-thing main
+orbit -p myprofile gl branch create 595 feature/new-thing main
 ```
 
 ### `gitlab branch delete <project> <branch>`
@@ -114,7 +114,7 @@ aidlc -p myprofile gl branch create 595 feature/new-thing main
 Delete a branch.
 
 ```
-aidlc -p myprofile gl branch delete 595 feature/old-thing
+orbit -p myprofile gl branch delete 595 feature/old-thing
 ```
 
 ---
@@ -138,7 +138,7 @@ Create a tag from a ref.
 | `-m, --message <text>` | Tag message (annotated tag) |
 
 ```
-aidlc -p myprofile gl tag create 595 v1.0.0 main -m "Release v1.0.0"
+orbit -p myprofile gl tag create 595 v1.0.0 main -m "Release v1.0.0"
 ```
 
 ---
@@ -159,7 +159,7 @@ List recent commits.
 View a commit's details.
 
 ```
-aidlc -p myprofile gl commit view 595 abc1234
+orbit -p myprofile gl commit view 595 abc1234
 ```
 
 ---
@@ -197,7 +197,7 @@ Create a merge request.
 | `--description <text>` | No | MR description |
 
 ```
-aidlc -p myprofile gl mr create 595 \
+orbit -p myprofile gl mr create 595 \
   --source feature/login --target main --title "Add login page"
 ```
 

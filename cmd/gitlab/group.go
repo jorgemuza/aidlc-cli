@@ -19,7 +19,7 @@ var groupViewCmd = &cobra.Command{
 	Use:   "view [id-or-path]",
 	Short: "View a group",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab group view schools/frontend`,
+	Example: `  orbit gitlab group view schools/frontend`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -51,8 +51,8 @@ var groupViewCmd = &cobra.Command{
 var groupListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List groups",
-	Example: `  aidlc gitlab group list
-  aidlc gitlab group list --search schools`,
+	Example: `  orbit gitlab group list
+  orbit gitlab group list --search schools`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -87,7 +87,7 @@ var groupSubgroupsCmd = &cobra.Command{
 	Use:   "subgroups [id-or-path]",
 	Short: "List subgroups of a group",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab group subgroups schools`,
+	Example: `  orbit gitlab group subgroups schools`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

@@ -5,8 +5,8 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/jorgemuza/aidlc-cli/internal/config"
-	"github.com/jorgemuza/aidlc-cli/internal/service"
+	"github.com/jorgemuza/orbit/internal/config"
+	"github.com/jorgemuza/orbit/internal/service"
 )
 
 // Client provides Bitbucket REST API operations.

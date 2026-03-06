@@ -1,10 +1,10 @@
 package bitbucket
 
 import (
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/config"
-	"github.com/jorgemuza/aidlc-cli/internal/service"
-	bbsvc "github.com/jorgemuza/aidlc-cli/internal/service/bitbucket"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/config"
+	"github.com/jorgemuza/orbit/internal/service"
+	bbsvc "github.com/jorgemuza/orbit/internal/service/bitbucket"
 	"github.com/spf13/cobra"
 )
 

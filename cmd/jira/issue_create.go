@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	jirasvc "github.com/jorgemuza/aidlc-cli/internal/service/jira"
+	jirasvc "github.com/jorgemuza/orbit/internal/service/jira"
 	"github.com/spf13/cobra"
 )
 
@@ -29,9 +29,9 @@ var issueCreateOpts struct {
 var issueCreateCmd = &cobra.Command{
 	Use:   "create",
 	Short: "Create a new issue",
-	Example: `  aidlc jira issue create --project PROJ --type Story --summary "Add login page"
-  aidlc jira issue create --project PROJ --type Bug --summary "Fix timeout" --priority High
-  aidlc jira issue create --project PROJ --type Sub-task --parent PROJ-123 --summary "Add validation"`,
+	Example: `  orbit jira issue create --project PROJ --type Story --summary "Add login page"
+  orbit jira issue create --project PROJ --type Bug --summary "Fix timeout" --priority High
+  orbit jira issue create --project PROJ --type Sub-task --parent PROJ-123 --summary "Add validation"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

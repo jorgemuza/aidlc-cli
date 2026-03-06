@@ -1,4 +1,4 @@
-# aidlc
+# orbit
 
 A unified CLI for managing connections to development lifecycle services.
 
@@ -11,45 +11,45 @@ Secrets can be stored as [1Password](https://1password.com/) references (`op://v
 ### MacOS - Homebrew
 
 ```bash
-brew install jorgemuza/tap/aidlc
+brew install jorgemuza/tap/orbit
 ```
 
 ### Windows - Scoop
 
 ```bash
   scoop bucket add jorgemuza https://github.com/jorgemuza/scoop-bucket
-  scoop install aidlc
+  scoop install orbit
 ```
 
 ### From source
 
 ```bash
-go install github.com/jorgemuza/aidlc-cli@latest
+go install github.com/jorgemuza/orbit@latest
 ```
 
 ### Binary releases
 
-Download from [GitHub Releases](https://github.com/jorgemuza/aidlc-cli/releases).
+Download from [GitHub Releases](https://github.com/jorgemuza/orbit/releases).
 
 ## Quick Start
 
 ```bash
 # Create a profile
-aidlc profile create --name my-project --default
+orbit profile create --name my-project --default
 
 # Add services
-aidlc profile add-service \
+orbit profile add-service \
   --name jira-cloud --type jira --variant cloud \
   --base-url https://myco.atlassian.net \
   --auth-method token --token "op://Dev/jira-token/credential"
 
-aidlc profile add-service \
+orbit profile add-service \
   --name gitlab-onprem --type gitlab --variant server \
   --base-url https://gitlab.internal.com \
   --auth-method basic --username admin --password "op://Dev/gitlab/password"
 
 # Test connectivity
-aidlc service ping
+orbit service ping
 ```
 
 ## Commands
@@ -58,7 +58,7 @@ aidlc service ping
 
 | Flag | Description | Default |
 |------|-------------|---------|
-| `--config` | Config file path | `~/.config/aidlc/config.yaml` |
+| `--config` | Config file path | `~/.config/orbit/config.yaml` |
 | `-p, --profile` | Profile to use (overrides default) | |
 | `-o, --output` | Output format: `table`, `json`, `yaml` | `table` |
 
@@ -67,7 +67,7 @@ aidlc service ping
 Create a new profile.
 
 ```bash
-aidlc profile create --name project-a --description "Project A services" --default
+orbit profile create --name project-a --description "Project A services" --default
 ```
 
 | Flag | Description |
@@ -81,8 +81,8 @@ aidlc profile create --name project-a --description "Project A services" --defau
 List all profiles with a summary of their services.
 
 ```bash
-aidlc profile list
-aidlc profile list -o json
+orbit profile list
+orbit profile list -o json
 ```
 
 ### `profile show`
@@ -90,7 +90,7 @@ aidlc profile list -o json
 Show details of a specific profile.
 
 ```bash
-aidlc profile show my-project
+orbit profile show my-project
 ```
 
 ### `profile use`
@@ -98,7 +98,7 @@ aidlc profile show my-project
 Set a profile as the default.
 
 ```bash
-aidlc profile use my-project
+orbit profile use my-project
 ```
 
 ### `profile delete`
@@ -106,7 +106,7 @@ aidlc profile use my-project
 Delete a profile.
 
 ```bash
-aidlc profile delete old-project
+orbit profile delete old-project
 ```
 
 ### `profile add-service`
@@ -115,13 +115,13 @@ Add a service connection to a profile.
 
 ```bash
 # Jira Cloud with API token
-aidlc profile add-service \
+orbit profile add-service \
   --name jira-cloud --type jira --variant cloud \
   --base-url https://myco.atlassian.net \
   --auth-method token --token "my-api-token"
 
 # GitLab self-hosted with basic auth and 1Password secret
-aidlc profile add-service \
+orbit profile add-service \
   --name gitlab-onprem --type gitlab --variant server \
   --base-url https://gitlab.internal.com \
   --auth-method basic --username admin \
@@ -146,7 +146,7 @@ aidlc profile add-service \
 Remove a service connection from a profile.
 
 ```bash
-aidlc profile remove-service --name jira-cloud
+orbit profile remove-service --name jira-cloud
 ```
 
 ### `service list`
@@ -154,8 +154,8 @@ aidlc profile remove-service --name jira-cloud
 List all services in the active profile.
 
 ```bash
-aidlc service list
-aidlc -p other-project service list
+orbit service list
+orbit -p other-project service list
 ```
 
 ### `service ping`
@@ -164,10 +164,10 @@ Test connectivity to services. Pings all services in the active profile, or a sp
 
 ```bash
 # Ping all services
-aidlc service ping
+orbit service ping
 
 # Ping a specific service
-aidlc service ping jira-cloud
+orbit service ping jira-cloud
 ```
 
 ### `version`
@@ -175,7 +175,7 @@ aidlc service ping jira-cloud
 Print version, commit hash, and build date.
 
 ```bash
-aidlc version
+orbit version
 ```
 
 ## Supported Services
@@ -195,7 +195,7 @@ Each service requires a `--base-url`, `--variant` (cloud/server), and authentica
 
 ```bash
 # Example: add Jira Cloud
-aidlc profile add-service \
+orbit profile add-service \
   --name jira-cloud --type jira --variant cloud \
   --base-url https://myco.atlassian.net \
   --auth-method token --token "op://Dev/jira/token"
@@ -212,7 +212,7 @@ Connects to Jira Cloud or Data Center/Server. `--base-url` is required for both 
 Tests connectivity via `GET /rest/api/2/serverInfo`. Returns version and server title.
 
 ```bash
-aidlc service ping jira-cloud
+orbit service ping jira-cloud
 ```
 
 #### `jira issue list`
@@ -221,20 +221,20 @@ List issues with filtering. Supports JQL queries.
 
 ```bash
 # List issues assigned to me
-aidlc jira issue list --assignee me
+orbit jira issue list --assignee me
 
 # Filter by status and type
-aidlc jira issue list --status "In Progress" --type Bug
+orbit jira issue list --status "In Progress" --type Bug
 
 # Raw JQL query
-aidlc jira issue list --jql "project = PROJ AND sprint in openSprints()"
+orbit jira issue list --jql "project = PROJ AND sprint in openSprints()"
 
 # Filter by date
-aidlc jira issue list --created-after 2024-01-01 --updated today
+orbit jira issue list --created-after 2024-01-01 --updated today
 
 # Output formats
-aidlc jira issue list -o json
-aidlc jira issue list -o yaml
+orbit jira issue list -o json
+orbit jira issue list -o yaml
 ```
 
 | Flag | Description |
@@ -263,9 +263,9 @@ aidlc jira issue list -o yaml
 View a single issue with details and comments.
 
 ```bash
-aidlc jira issue view PROJ-123
-aidlc jira issue view PROJ-123 --comments 5
-aidlc jira issue view PROJ-123 -o json
+orbit jira issue view PROJ-123
+orbit jira issue view PROJ-123 --comments 5
+orbit jira issue view PROJ-123 -o json
 ```
 
 | Flag | Description |
@@ -277,7 +277,7 @@ aidlc jira issue view PROJ-123 -o json
 Create a new issue.
 
 ```bash
-aidlc jira issue create \
+orbit jira issue create \
   --type Story \
   --summary "Implement login page" \
   --body "As a user, I want to log in to the app" \
@@ -287,13 +287,13 @@ aidlc jira issue create \
   --component "Web App"
 
 # Create a subtask
-aidlc jira issue create \
+orbit jira issue create \
   --type Sub-task \
   --parent PROJ-123 \
   --summary "Add password validation"
 
 # With custom fields
-aidlc jira issue create \
+orbit jira issue create \
   --type Bug \
   --summary "Login fails" \
   --custom "customfield_10001=team-alpha"
@@ -320,12 +320,12 @@ aidlc jira issue create \
 Update an existing issue.
 
 ```bash
-aidlc jira issue edit PROJ-123 \
+orbit jira issue edit PROJ-123 \
   --summary "Updated title" \
   --priority Critical
 
 # Add and remove labels (prefix with - to remove)
-aidlc jira issue edit PROJ-123 \
+orbit jira issue edit PROJ-123 \
   --label new-label --label -old-label
 ```
 
@@ -344,9 +344,9 @@ aidlc jira issue edit PROJ-123 \
 Assign or unassign an issue.
 
 ```bash
-aidlc jira issue assign PROJ-123 "john@example.com"
-aidlc jira issue assign PROJ-123 me        # assign to self
-aidlc jira issue assign PROJ-123 x         # unassign
+orbit jira issue assign PROJ-123 "john@example.com"
+orbit jira issue assign PROJ-123 me        # assign to self
+orbit jira issue assign PROJ-123 x         # unassign
 ```
 
 #### `jira issue move`
@@ -354,9 +354,9 @@ aidlc jira issue assign PROJ-123 x         # unassign
 Transition an issue to a new workflow state.
 
 ```bash
-aidlc jira issue move PROJ-123 "In Progress"
-aidlc jira issue move PROJ-123 Done --comment "Fixed in v2.1"
-aidlc jira issue move PROJ-123 Done --resolution Fixed
+orbit jira issue move PROJ-123 "In Progress"
+orbit jira issue move PROJ-123 Done --comment "Fixed in v2.1"
+orbit jira issue move PROJ-123 Done --resolution Fixed
 ```
 
 | Flag | Description |
@@ -370,8 +370,8 @@ aidlc jira issue move PROJ-123 Done --resolution Fixed
 Delete an issue.
 
 ```bash
-aidlc jira issue delete PROJ-123
-aidlc jira issue delete PROJ-123 --cascade   # delete with subtasks
+orbit jira issue delete PROJ-123
+orbit jira issue delete PROJ-123 --cascade   # delete with subtasks
 ```
 
 #### `jira issue comment`
@@ -379,8 +379,8 @@ aidlc jira issue delete PROJ-123 --cascade   # delete with subtasks
 Add a comment to an issue.
 
 ```bash
-aidlc jira issue comment PROJ-123 "This is fixed now"
-aidlc jira issue comment PROJ-123 --body "Internal note" --internal
+orbit jira issue comment PROJ-123 "This is fixed now"
+orbit jira issue comment PROJ-123 --body "Internal note" --internal
 ```
 
 | Flag | Description |
@@ -392,8 +392,8 @@ aidlc jira issue comment PROJ-123 --body "Internal note" --internal
 Link two issues together.
 
 ```bash
-aidlc jira issue link PROJ-100 PROJ-200 Blocks
-aidlc jira issue link PROJ-100 PROJ-200 Duplicates
+orbit jira issue link PROJ-100 PROJ-200 Blocks
+orbit jira issue link PROJ-100 PROJ-200 Duplicates
 ```
 
 #### `jira issue unlink`
@@ -401,7 +401,7 @@ aidlc jira issue link PROJ-100 PROJ-200 Duplicates
 Remove a link between two issues.
 
 ```bash
-aidlc jira issue unlink PROJ-100 PROJ-200
+orbit jira issue unlink PROJ-100 PROJ-200
 ```
 
 #### `jira issue worklog`
@@ -409,7 +409,7 @@ aidlc jira issue unlink PROJ-100 PROJ-200
 Log time spent on an issue.
 
 ```bash
-aidlc jira issue worklog PROJ-123 "2h 30m" --comment "Code review"
+orbit jira issue worklog PROJ-123 "2h 30m" --comment "Code review"
 ```
 
 #### `jira issue clone`
@@ -417,8 +417,8 @@ aidlc jira issue worklog PROJ-123 "2h 30m" --comment "Code review"
 Clone an issue with optional modifications.
 
 ```bash
-aidlc jira issue clone PROJ-123 --summary "Cloned: new title"
-aidlc jira issue clone PROJ-123 --replace "v1:v2"
+orbit jira issue clone PROJ-123 --summary "Cloned: new title"
+orbit jira issue clone PROJ-123 --replace "v1:v2"
 ```
 
 #### `jira epic list`
@@ -426,8 +426,8 @@ aidlc jira issue clone PROJ-123 --replace "v1:v2"
 List epics or issues within an epic.
 
 ```bash
-aidlc jira epic list                    # list all epics
-aidlc jira epic list PROJ-50            # issues in epic PROJ-50
+orbit jira epic list                    # list all epics
+orbit jira epic list PROJ-50            # issues in epic PROJ-50
 ```
 
 #### `jira epic create`
@@ -435,7 +435,7 @@ aidlc jira epic list PROJ-50            # issues in epic PROJ-50
 Create a new epic.
 
 ```bash
-aidlc jira epic create \
+orbit jira epic create \
   --name "Q1 Auth Overhaul" \
   --summary "Revamp authentication system" \
   --body "Replace legacy auth with OAuth2"
@@ -446,8 +446,8 @@ aidlc jira epic create \
 Add or remove issues from an epic (up to 50 at once).
 
 ```bash
-aidlc jira epic add PROJ-50 PROJ-101 PROJ-102 PROJ-103
-aidlc jira epic remove PROJ-101 PROJ-102
+orbit jira epic add PROJ-50 PROJ-101 PROJ-102 PROJ-103
+orbit jira epic remove PROJ-101 PROJ-102
 ```
 
 #### `jira sprint list`
@@ -455,10 +455,10 @@ aidlc jira epic remove PROJ-101 PROJ-102
 List sprints or issues in a sprint.
 
 ```bash
-aidlc jira sprint list                  # list all sprints
-aidlc jira sprint list 42               # issues in sprint 42
-aidlc jira sprint list --current        # active sprint issues
-aidlc jira sprint list --state active   # filter by sprint state
+orbit jira sprint list                  # list all sprints
+orbit jira sprint list 42               # issues in sprint 42
+orbit jira sprint list --current        # active sprint issues
+orbit jira sprint list --state active   # filter by sprint state
 ```
 
 | Flag | Description |
@@ -473,7 +473,7 @@ aidlc jira sprint list --state active   # filter by sprint state
 Add issues to a sprint (up to 50 at once).
 
 ```bash
-aidlc jira sprint add 42 PROJ-101 PROJ-102
+orbit jira sprint add 42 PROJ-101 PROJ-102
 ```
 
 #### `jira board list`
@@ -481,7 +481,7 @@ aidlc jira sprint add 42 PROJ-101 PROJ-102
 List all boards in the project.
 
 ```bash
-aidlc jira board list
+orbit jira board list
 ```
 
 #### `jira project list`
@@ -489,7 +489,7 @@ aidlc jira board list
 List all accessible projects.
 
 ```bash
-aidlc jira project list
+orbit jira project list
 ```
 
 #### `jira release list`
@@ -497,7 +497,7 @@ aidlc jira project list
 List versions/releases for the project.
 
 ```bash
-aidlc jira release list
+orbit jira release list
 ```
 
 ---
@@ -514,7 +514,7 @@ Connects to Confluence Cloud or Data Center/Server. `--base-url` is required for
 Tests connectivity by querying spaces. Returns variant and space count.
 
 ```bash
-aidlc service ping confluence-cloud
+orbit service ping confluence-cloud
 ```
 
 #### `confluence page read`
@@ -522,10 +522,10 @@ aidlc service ping confluence-cloud
 Read a page's content in different formats.
 
 ```bash
-aidlc confluence page read 12345
-aidlc confluence page read 12345 --format markdown
-aidlc confluence page read 12345 --format html
-aidlc confluence page read "https://myco.atlassian.net/wiki/spaces/DEV/pages/12345"
+orbit confluence page read 12345
+orbit confluence page read 12345 --format markdown
+orbit confluence page read 12345 --format html
+orbit confluence page read "https://myco.atlassian.net/wiki/spaces/DEV/pages/12345"
 ```
 
 | Flag | Description |
@@ -537,7 +537,7 @@ aidlc confluence page read "https://myco.atlassian.net/wiki/spaces/DEV/pages/123
 Get page metadata (title, space, version, author, dates).
 
 ```bash
-aidlc confluence page info 12345
+orbit confluence page info 12345
 ```
 
 #### `confluence page create`
@@ -545,13 +545,13 @@ aidlc confluence page info 12345
 Create a new page in a space.
 
 ```bash
-aidlc confluence page create \
+orbit confluence page create \
   --title "Architecture Guide" \
   --space DEV \
   --body "<h1>Overview</h1><p>System architecture...</p>"
 
 # Create as child page
-aidlc confluence page create-child \
+orbit confluence page create-child \
   --title "API Reference" \
   --parent 12345 \
   --body-file ./api-docs.html
@@ -570,11 +570,11 @@ aidlc confluence page create-child \
 Update an existing page's title or content.
 
 ```bash
-aidlc confluence page update 12345 \
+orbit confluence page update 12345 \
   --title "Updated Title" \
   --body "<p>New content</p>"
 
-aidlc confluence page update 12345 --body-file ./updated-content.html
+orbit confluence page update 12345 --body-file ./updated-content.html
 ```
 
 #### `confluence page delete`
@@ -582,7 +582,7 @@ aidlc confluence page update 12345 --body-file ./updated-content.html
 Delete a page (moves to trash).
 
 ```bash
-aidlc confluence page delete 12345
+orbit confluence page delete 12345
 ```
 
 #### `confluence page move`
@@ -590,8 +590,8 @@ aidlc confluence page delete 12345
 Move a page to a new parent within the same space.
 
 ```bash
-aidlc confluence page move 12345 67890
-aidlc confluence page move 12345 67890 --title "Renamed Page"
+orbit confluence page move 12345 67890
+orbit confluence page move 12345 67890 --title "Renamed Page"
 ```
 
 #### `confluence page children`
@@ -599,9 +599,9 @@ aidlc confluence page move 12345 67890 --title "Renamed Page"
 List child pages, optionally recursive.
 
 ```bash
-aidlc confluence page children 12345
-aidlc confluence page children 12345 --recursive --max-depth 3
-aidlc confluence page children 12345 --format tree
+orbit confluence page children 12345
+orbit confluence page children 12345 --recursive --max-depth 3
+orbit confluence page children 12345 --format tree
 ```
 
 | Flag | Description |
@@ -615,8 +615,8 @@ aidlc confluence page children 12345 --format tree
 Duplicate an entire page tree.
 
 ```bash
-aidlc confluence page copy-tree 12345 67890
-aidlc confluence page copy-tree 12345 67890 \
+orbit confluence page copy-tree 12345 67890
+orbit confluence page copy-tree 12345 67890 \
   --max-depth 2 --exclude "Archive*" --dry-run
 ```
 
@@ -633,9 +633,9 @@ aidlc confluence page copy-tree 12345 67890 \
 Export a page with optional attachments.
 
 ```bash
-aidlc confluence page export 12345 --dest ./export/
-aidlc confluence page export 12345 --format markdown --recursive
-aidlc confluence page export 12345 --skip-attachments
+orbit confluence page export 12345 --dest ./export/
+orbit confluence page export 12345 --format markdown --recursive
+orbit confluence page export 12345 --skip-attachments
 ```
 
 | Flag | Description |
@@ -653,9 +653,9 @@ aidlc confluence page export 12345 --skip-attachments
 Search for content using text or CQL.
 
 ```bash
-aidlc confluence search "deployment guide"
-aidlc confluence search --cql "space = DEV AND type = page AND title ~ 'API*'"
-aidlc confluence search "auth" --limit 20
+orbit confluence search "deployment guide"
+orbit confluence search --cql "space = DEV AND type = page AND title ~ 'API*'"
+orbit confluence search "auth" --limit 20
 ```
 
 | Flag | Description |
@@ -668,7 +668,7 @@ aidlc confluence search "auth" --limit 20
 List all accessible spaces.
 
 ```bash
-aidlc confluence space list
+orbit confluence space list
 ```
 
 #### `confluence page find`
@@ -676,7 +676,7 @@ aidlc confluence space list
 Find a page by title within a space.
 
 ```bash
-aidlc confluence page find "Getting Started" --space DEV
+orbit confluence page find "Getting Started" --space DEV
 ```
 
 #### `confluence attachment list`
@@ -684,8 +684,8 @@ aidlc confluence page find "Getting Started" --space DEV
 List attachments on a page.
 
 ```bash
-aidlc confluence attachment list 12345
-aidlc confluence attachment list 12345 --pattern "*.pdf" --download --dest ./files/
+orbit confluence attachment list 12345
+orbit confluence attachment list 12345 --pattern "*.pdf" --download --dest ./files/
 ```
 
 | Flag | Description |
@@ -699,8 +699,8 @@ aidlc confluence attachment list 12345 --pattern "*.pdf" --download --dest ./fil
 Upload files to a page.
 
 ```bash
-aidlc confluence attachment upload 12345 ./diagram.png
-aidlc confluence attachment upload 12345 ./report.pdf --replace
+orbit confluence attachment upload 12345 ./diagram.png
+orbit confluence attachment upload 12345 ./report.pdf --replace
 ```
 
 | Flag | Description |
@@ -712,7 +712,7 @@ aidlc confluence attachment upload 12345 ./report.pdf --replace
 Delete an attachment from a page.
 
 ```bash
-aidlc confluence attachment delete 12345 att67890
+orbit confluence attachment delete 12345 att67890
 ```
 
 #### `confluence comment list`
@@ -720,8 +720,8 @@ aidlc confluence attachment delete 12345 att67890
 List comments on a page.
 
 ```bash
-aidlc confluence comment list 12345
-aidlc confluence comment list 12345 --location inline --depth all
+orbit confluence comment list 12345
+orbit confluence comment list 12345 --location inline --depth all
 ```
 
 | Flag | Description |
@@ -734,8 +734,8 @@ aidlc confluence comment list 12345 --location inline --depth all
 Add a comment to a page.
 
 ```bash
-aidlc confluence comment add 12345 "Looks good, approved."
-aidlc confluence comment add 12345 --body "Please review section 3" --inline
+orbit confluence comment add 12345 "Looks good, approved."
+orbit confluence comment add 12345 --body "Please review section 3" --inline
 ```
 
 #### `confluence comment delete`
@@ -743,7 +743,7 @@ aidlc confluence comment add 12345 --body "Please review section 3" --inline
 Delete a comment.
 
 ```bash
-aidlc confluence comment delete 98765
+orbit confluence comment delete 98765
 ```
 
 #### `confluence property list / get / set / delete`
@@ -751,10 +751,10 @@ aidlc confluence comment delete 98765
 Manage page properties (key-value metadata).
 
 ```bash
-aidlc confluence property list 12345
-aidlc confluence property get 12345 status
-aidlc confluence property set 12345 status '{"state":"approved"}'
-aidlc confluence property delete 12345 status
+orbit confluence property list 12345
+orbit confluence property get 12345 status
+orbit confluence property set 12345 status '{"state":"approved"}'
+orbit confluence property delete 12345 status
 ```
 
 ---
@@ -768,7 +768,7 @@ Connects to GitLab.com or self-hosted GitLab. `--base-url` defaults to `https://
 Tests connectivity via `GET /api/v4/version`. Returns version and revision.
 
 ```bash
-aidlc service ping gitlab-cloud
+orbit service ping gitlab-cloud
 ```
 
 #### `gitlab project list`
@@ -776,9 +776,9 @@ aidlc service ping gitlab-cloud
 List accessible projects.
 
 ```bash
-aidlc gitlab project list
-aidlc gitlab project list --owned
-aidlc gitlab project list --search "api"
+orbit gitlab project list
+orbit gitlab project list --owned
+orbit gitlab project list --search "api"
 ```
 
 #### `gitlab issue list`
@@ -786,9 +786,9 @@ aidlc gitlab project list --search "api"
 List issues in a project.
 
 ```bash
-aidlc gitlab issue list --project my-group/my-project
-aidlc gitlab issue list --state opened --assignee me
-aidlc gitlab issue list --label bug --label urgent
+orbit gitlab issue list --project my-group/my-project
+orbit gitlab issue list --state opened --assignee me
+orbit gitlab issue list --label bug --label urgent
 ```
 
 | Flag | Description |
@@ -805,7 +805,7 @@ aidlc gitlab issue list --label bug --label urgent
 View a single issue.
 
 ```bash
-aidlc gitlab issue view --project my-group/my-project 42
+orbit gitlab issue view --project my-group/my-project 42
 ```
 
 #### `gitlab issue create`
@@ -813,7 +813,7 @@ aidlc gitlab issue view --project my-group/my-project 42
 Create a new issue.
 
 ```bash
-aidlc gitlab issue create --project my-group/my-project \
+orbit gitlab issue create --project my-group/my-project \
   --title "Fix login timeout" \
   --description "Users report 30s timeout on login" \
   --label bug --assignee john
@@ -824,7 +824,7 @@ aidlc gitlab issue create --project my-group/my-project \
 Update an issue.
 
 ```bash
-aidlc gitlab issue edit --project my-group/my-project 42 \
+orbit gitlab issue edit --project my-group/my-project 42 \
   --title "Updated title" --state-event close
 ```
 
@@ -833,8 +833,8 @@ aidlc gitlab issue edit --project my-group/my-project 42 \
 List merge requests.
 
 ```bash
-aidlc gitlab mr list --project my-group/my-project
-aidlc gitlab mr list --project my-group/my-project --state merged
+orbit gitlab mr list --project my-group/my-project
+orbit gitlab mr list --project my-group/my-project --state merged
 ```
 
 #### `gitlab mr view`
@@ -842,7 +842,7 @@ aidlc gitlab mr list --project my-group/my-project --state merged
 View a merge request.
 
 ```bash
-aidlc gitlab mr view --project my-group/my-project 15
+orbit gitlab mr view --project my-group/my-project 15
 ```
 
 #### `gitlab mr create`
@@ -850,7 +850,7 @@ aidlc gitlab mr view --project my-group/my-project 15
 Create a merge request.
 
 ```bash
-aidlc gitlab mr create --project my-group/my-project \
+orbit gitlab mr create --project my-group/my-project \
   --source feature-branch --target main \
   --title "Add login feature" \
   --description "Implements OAuth2 login flow"
@@ -861,8 +861,8 @@ aidlc gitlab mr create --project my-group/my-project \
 List CI/CD pipelines.
 
 ```bash
-aidlc gitlab pipeline list --project my-group/my-project
-aidlc gitlab pipeline list --project my-group/my-project --status failed
+orbit gitlab pipeline list --project my-group/my-project
+orbit gitlab pipeline list --project my-group/my-project --status failed
 ```
 
 #### `gitlab pipeline view`
@@ -870,7 +870,7 @@ aidlc gitlab pipeline list --project my-group/my-project --status failed
 View pipeline details and jobs.
 
 ```bash
-aidlc gitlab pipeline view --project my-group/my-project 12345
+orbit gitlab pipeline view --project my-group/my-project 12345
 ```
 
 ---
@@ -887,7 +887,7 @@ Connects to Bitbucket Cloud or Data Center/Server. `--base-url` defaults to `htt
 Tests connectivity. Cloud pings `/user`, Server pings `/rest/api/latest/application-properties`.
 
 ```bash
-aidlc service ping bitbucket-cloud
+orbit service ping bitbucket-cloud
 ```
 
 #### `bitbucket repo list`
@@ -895,7 +895,7 @@ aidlc service ping bitbucket-cloud
 List repositories.
 
 ```bash
-aidlc bitbucket repo list --workspace myteam
+orbit bitbucket repo list --workspace myteam
 ```
 
 #### `bitbucket pr list`
@@ -903,8 +903,8 @@ aidlc bitbucket repo list --workspace myteam
 List pull requests.
 
 ```bash
-aidlc bitbucket pr list --repo myteam/myrepo
-aidlc bitbucket pr list --repo myteam/myrepo --state OPEN
+orbit bitbucket pr list --repo myteam/myrepo
+orbit bitbucket pr list --repo myteam/myrepo --state OPEN
 ```
 
 #### `bitbucket pr view`
@@ -912,7 +912,7 @@ aidlc bitbucket pr list --repo myteam/myrepo --state OPEN
 View a pull request.
 
 ```bash
-aidlc bitbucket pr view --repo myteam/myrepo 42
+orbit bitbucket pr view --repo myteam/myrepo 42
 ```
 
 #### `bitbucket pr create`
@@ -920,7 +920,7 @@ aidlc bitbucket pr view --repo myteam/myrepo 42
 Create a pull request.
 
 ```bash
-aidlc bitbucket pr create --repo myteam/myrepo \
+orbit bitbucket pr create --repo myteam/myrepo \
   --source feature-branch --target main \
   --title "Add search feature" \
   --description "Implements full-text search"
@@ -931,7 +931,7 @@ aidlc bitbucket pr create --repo myteam/myrepo \
 List pipelines.
 
 ```bash
-aidlc bitbucket pipeline list --repo myteam/myrepo
+orbit bitbucket pipeline list --repo myteam/myrepo
 ```
 
 ## 1Password Integration
@@ -939,7 +939,7 @@ aidlc bitbucket pipeline list --repo myteam/myrepo
 Instead of storing secrets in plain text, use 1Password references:
 
 ```bash
-aidlc profile add-service \
+orbit profile add-service \
   --name jira-cloud --type jira --variant cloud \
   --base-url https://myco.atlassian.net \
   --auth-method token \
@@ -950,7 +950,7 @@ Secrets are resolved at runtime via `op read`, so the [1Password CLI](https://de
 
 ## Configuration
 
-Config is stored in YAML at `~/.config/aidlc/config.yaml`:
+Config is stored in YAML at `~/.config/orbit/config.yaml`:
 
 ```yaml
 profiles:

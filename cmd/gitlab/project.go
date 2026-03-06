@@ -11,8 +11,8 @@ var projectCmd = &cobra.Command{
 	Use:   "project [id-or-path]",
 	Short: "View a project",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab project 595
-  aidlc gitlab project schools/frontend/schools-frontend-backoffice`,
+	Example: `  orbit gitlab project 595
+  orbit gitlab project schools/frontend/schools-frontend-backoffice`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -46,9 +46,9 @@ var projectCmd = &cobra.Command{
 var projectsCmd = &cobra.Command{
 	Use:   "projects",
 	Short: "List projects",
-	Example: `  aidlc gitlab projects
-  aidlc gitlab projects --search frontend
-  aidlc gitlab projects --group schools/frontend`,
+	Example: `  orbit gitlab projects
+  orbit gitlab projects --search frontend
+  orbit gitlab projects --group schools/frontend`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

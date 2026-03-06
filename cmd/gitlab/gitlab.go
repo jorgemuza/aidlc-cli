@@ -1,10 +1,10 @@
 package gitlab
 
 import (
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/config"
-	"github.com/jorgemuza/aidlc-cli/internal/service"
-	glsvc "github.com/jorgemuza/aidlc-cli/internal/service/gitlab"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/config"
+	"github.com/jorgemuza/orbit/internal/service"
+	glsvc "github.com/jorgemuza/orbit/internal/service/gitlab"
 	"github.com/spf13/cobra"
 )
 

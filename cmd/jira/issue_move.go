@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	jirasvc "github.com/jorgemuza/aidlc-cli/internal/service/jira"
+	jirasvc "github.com/jorgemuza/orbit/internal/service/jira"
 	"github.com/spf13/cobra"
 )
 
@@ -18,9 +18,9 @@ var issueMoveCmd = &cobra.Command{
 	Aliases: []string{"transition"},
 	Short:   "Transition an issue to a new workflow state",
 	Args:    cobra.ExactArgs(2),
-	Example: `  aidlc jira issue move PROJ-123 "In Progress"
-  aidlc jira issue move PROJ-123 Done --comment "Fixed in v2.1"
-  aidlc jira issue move PROJ-123 Done --resolution Fixed`,
+	Example: `  orbit jira issue move PROJ-123 "In Progress"
+  orbit jira issue move PROJ-123 Done --comment "Fixed in v2.1"
+  orbit jira issue move PROJ-123 Done --resolution Fixed`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

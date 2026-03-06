@@ -5,8 +5,8 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/config"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -36,13 +36,13 @@ Auth credentials can be plain text or 1Password secret references:
 Supported types: jira, confluence, gitlab, bitbucket
 Supported variants: cloud, server`,
 	Example: `  # Add Jira Cloud with 1Password secret
-  aidlc profile add-service --profile project-a \
+  orbit profile add-service --profile project-a \
     --name jira-cloud --type jira --variant cloud \
     --base-url https://myco.atlassian.net \
     --auth-method token --token "op://Dev/jira-token/credential"
 
   # Add self-hosted GitLab with basic auth
-  aidlc profile add-service --profile project-a \
+  orbit profile add-service --profile project-a \
     --name gitlab-onprem --type gitlab --variant server \
     --base-url https://gitlab.internal.com \
     --auth-method basic --username admin --password "op://Dev/gitlab/password"`,

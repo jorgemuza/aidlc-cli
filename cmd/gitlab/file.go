@@ -19,8 +19,8 @@ var fileReadCmd = &cobra.Command{
 	Use:   "read [project] [file-path]",
 	Short: "Read a file from the repository",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab file read foundation/ai .gitlab-ci.yml
-  aidlc gitlab file read foundation/ai src/main.go --ref develop`,
+	Example: `  orbit gitlab file read foundation/ai .gitlab-ci.yml
+  orbit gitlab file read foundation/ai src/main.go --ref develop`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -46,8 +46,8 @@ var fileUpdateCmd = &cobra.Command{
 	Use:   "update [project] [file-path]",
 	Short: "Update a file in the repository",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab file update foundation/ai .gitlab-ci.yml --body-file ci.yml --message "fix: add runner tags"
-  aidlc gitlab file update foundation/ai README.md --body "# Hello" --branch main --message "update readme"`,
+	Example: `  orbit gitlab file update foundation/ai .gitlab-ci.yml --body-file ci.yml --message "fix: add runner tags"
+  orbit gitlab file update foundation/ai README.md --body "# Hello" --branch main --message "update readme"`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	conflsvc "github.com/jorgemuza/aidlc-cli/internal/service/confluence"
+	conflsvc "github.com/jorgemuza/orbit/internal/service/confluence"
 	"github.com/spf13/cobra"
 )
 
@@ -25,8 +25,8 @@ and URL are written back to the frontmatter for future updates.
 Relative markdown links (e.g. [text](./file.md)) are converted to Confluence
 page links using the target file's title.`,
 	Args: cobra.ExactArgs(1),
-	Example: `  aidlc confluence publish ./docs --space FO --parent 12345
-  aidlc confluence publish ./docs --space FO --parent 12345 --dry-run`,
+	Example: `  orbit confluence publish ./docs --space FO --parent 12345
+  orbit confluence publish ./docs --space FO --parent 12345 --dry-run`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		dir := args[0]
 		space, _ := cmd.Flags().GetString("space")

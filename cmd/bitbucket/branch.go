@@ -19,8 +19,8 @@ var branchListCmd = &cobra.Command{
 	Use:   "list [project-key] [repo-slug]",
 	Short: "List branches",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc bitbucket branch list L3SUP agents-sre
-  aidlc bb branch list L3SUP agents-sre --filter main`,
+	Example: `  orbit bitbucket branch list L3SUP agents-sre
+  orbit bb branch list L3SUP agents-sre --filter main`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -58,7 +58,7 @@ var branchCreateCmd = &cobra.Command{
 	Use:   "create [project-key] [repo-slug] [name] [start-point]",
 	Short: "Create a branch",
 	Args:  cobra.ExactArgs(4),
-	Example: `  aidlc bb branch create L3SUP agents-sre feature/new-thing main`,
+	Example: `  orbit bb branch create L3SUP agents-sre feature/new-thing main`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -78,7 +78,7 @@ var branchDeleteCmd = &cobra.Command{
 	Use:   "delete [project-key] [repo-slug] [branch-name]",
 	Short: "Delete a branch",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc bb branch delete L3SUP agents-sre feature/old-thing`,
+	Example: `  orbit bb branch delete L3SUP agents-sre feature/old-thing`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -98,7 +98,7 @@ var branchDefaultCmd = &cobra.Command{
 	Use:   "default [project-key] [repo-slug]",
 	Short: "Show default branch",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc bb branch default L3SUP agents-sre`,
+	Example: `  orbit bb branch default L3SUP agents-sre`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {

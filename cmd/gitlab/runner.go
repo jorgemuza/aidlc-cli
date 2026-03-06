@@ -21,9 +21,9 @@ var runnerListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List runners assigned to a project",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab runner list foundation/ai
-  aidlc gitlab runner list foundation/ai --status online
-  aidlc gitlab runner list foundation/ai --tag docker`,
+	Example: `  orbit gitlab runner list foundation/ai
+  orbit gitlab runner list foundation/ai --status online
+  orbit gitlab runner list foundation/ai --tag docker`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -48,8 +48,8 @@ var runnerListCmd = &cobra.Command{
 
 		if len(runners) == 0 {
 			fmt.Println("No runners assigned to this project.")
-			fmt.Println("Use 'aidlc gitlab runner list-all' to see available runners,")
-			fmt.Println("then 'aidlc gitlab runner enable <project> <runner-id>' to assign one.")
+			fmt.Println("Use 'orbit gitlab runner list-all' to see available runners,")
+			fmt.Println("then 'orbit gitlab runner enable <project> <runner-id>' to assign one.")
 			return nil
 		}
 
@@ -74,9 +74,9 @@ var runnerListCmd = &cobra.Command{
 var runnerListAllCmd = &cobra.Command{
 	Use:   "list-all",
 	Short: "List all runners visible to you (admin)",
-	Example: `  aidlc gitlab runner list-all
-  aidlc gitlab runner list-all --scope shared --status online
-  aidlc gitlab runner list-all --tag docker`,
+	Example: `  orbit gitlab runner list-all
+  orbit gitlab runner list-all --scope shared --status online
+  orbit gitlab runner list-all --tag docker`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -127,7 +127,7 @@ var runnerViewCmd = &cobra.Command{
 	Use:   "view [runner-id]",
 	Short: "View runner details",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab runner view 42`,
+	Example: `  orbit gitlab runner view 42`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -172,7 +172,7 @@ var runnerEnableCmd = &cobra.Command{
 	Use:   "enable [project] [runner-id]",
 	Short: "Assign a runner to a project",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab runner enable foundation/ai 42`,
+	Example: `  orbit gitlab runner enable foundation/ai 42`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -198,7 +198,7 @@ var runnerDisableCmd = &cobra.Command{
 	Use:   "disable [project] [runner-id]",
 	Short: "Remove a runner from a project",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab runner disable foundation/ai 42`,
+	Example: `  orbit gitlab runner disable foundation/ai 42`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

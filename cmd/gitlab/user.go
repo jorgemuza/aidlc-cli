@@ -49,7 +49,7 @@ var userMeCmd = &cobra.Command{
 var userListCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List users",
-	Example: `  aidlc gitlab user list --search john`,
+	Example: `  orbit gitlab user list --search john`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

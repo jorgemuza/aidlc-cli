@@ -19,8 +19,8 @@ var projectViewCmd = &cobra.Command{
 	Use:   "view [project-key]",
 	Short: "View a project",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc bitbucket project view L3SUP
-  aidlc bb project view MYPROJ`,
+	Example: `  orbit bitbucket project view L3SUP
+  orbit bb project view MYPROJ`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -51,7 +51,7 @@ var projectViewCmd = &cobra.Command{
 var projectListCmd = &cobra.Command{
 	Use:     "list",
 	Short:   "List projects",
-	Example: `  aidlc bitbucket project list`,
+	Example: `  orbit bitbucket project list`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {

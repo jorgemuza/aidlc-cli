@@ -19,8 +19,8 @@ var commitListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List commits",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab commit list 595
-  aidlc gitlab commit list 595 --ref main`,
+	Example: `  orbit gitlab commit list 595
+  orbit gitlab commit list 595 --ref main`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -62,7 +62,7 @@ var commitViewCmd = &cobra.Command{
 	Use:   "view [project] [sha]",
 	Short: "View a commit",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab commit view 595 abc1234`,
+	Example: `  orbit gitlab commit view 595 abc1234`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

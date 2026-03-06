@@ -19,8 +19,8 @@ var repoViewCmd = &cobra.Command{
 	Use:   "view [project-key] [repo-slug]",
 	Short: "View a repository",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc bitbucket repo view L3SUP agents-sre
-  aidlc bb repo view MYPROJ my-repo`,
+	Example: `  orbit bitbucket repo view L3SUP agents-sre
+  orbit bb repo view MYPROJ my-repo`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {
@@ -62,8 +62,8 @@ var repoListCmd = &cobra.Command{
 	Use:   "list [project-key]",
 	Short: "List repositories in a project",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc bitbucket repo list L3SUP
-  aidlc bb repo list MYPROJ`,
+	Example: `  orbit bitbucket repo list L3SUP
+  orbit bb repo list MYPROJ`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {

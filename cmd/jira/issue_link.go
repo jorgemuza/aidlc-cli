@@ -10,8 +10,8 @@ var issueLinkCmd = &cobra.Command{
 	Use:   "link [inward-key] [outward-key] [link-type]",
 	Short: "Link two issues together",
 	Args:  cobra.ExactArgs(3),
-	Example: `  aidlc jira issue link PROJ-100 PROJ-200 Blocks
-  aidlc jira issue link PROJ-100 PROJ-200 Duplicates`,
+	Example: `  orbit jira issue link PROJ-100 PROJ-200 Blocks
+  orbit jira issue link PROJ-100 PROJ-200 Duplicates`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

@@ -1,6 +1,6 @@
-# aidlc Confluence Commands Reference
+# orbit Confluence Commands Reference
 
-Complete reference for all `aidlc confluence` commands with flags and examples.
+Complete reference for all `orbit confluence` commands with flags and examples.
 
 ## Table of Contents
 
@@ -23,7 +23,7 @@ These flags are available on all confluence subcommands:
 | `-p, --profile` | Profile to use (overrides default) |
 | `-o, --output` | Output format: table, json, yaml (default: table) |
 | `--service` | Confluence service name (if profile has multiple) |
-| `--config` | Config file path (default: ~/.config/aidlc/config.yaml) |
+| `--config` | Config file path (default: ~/.config/orbit/config.yaml) |
 
 ---
 
@@ -32,14 +32,14 @@ These flags are available on all confluence subcommands:
 View a Confluence page's details including title, version, space, and URL.
 
 ```bash
-aidlc -p profile confluence page <page-id> [flags]
+orbit -p profile confluence page <page-id> [flags]
 ```
 
 **Examples:**
 
 ```bash
-aidlc -p paybook confluence page 473676972036
-aidlc -p paybook confluence page 473676972036 -o json
+orbit -p paybook confluence page 473676972036
+orbit -p paybook confluence page 473676972036 -o json
 ```
 
 **Output (table format):**
@@ -61,14 +61,14 @@ URL:     https://paybook.atlassian.net/wiki/spaces/FO/pages/473676972036
 List child pages of a given page.
 
 ```bash
-aidlc -p profile confluence children <page-id> [flags]
+orbit -p profile confluence children <page-id> [flags]
 ```
 
 **Examples:**
 
 ```bash
-aidlc -p paybook confluence children 473677299713
-aidlc -p paybook confluence children 473677299713 -o json
+orbit -p paybook confluence children 473677299713
+orbit -p paybook confluence children 473677299713 -o json
 ```
 
 **Output:**
@@ -88,7 +88,7 @@ ID              VERSION  TITLE
 Create a new Confluence page. Automatically sets wide width on the created page.
 
 ```bash
-aidlc -p profile confluence create [flags]
+orbit -p profile confluence create [flags]
 ```
 
 **Flags:**
@@ -105,11 +105,11 @@ aidlc -p profile confluence create [flags]
 
 ```bash
 # From markdown file
-aidlc -p paybook confluence create --space FO --parent 473677299713 \
+orbit -p paybook confluence create --space FO --parent 473677299713 \
   --title "Sprint Ceremonies" --file docs/sprint-ceremonies.md
 
 # With inline content
-aidlc -p paybook confluence create --space FO --parent 473677299713 \
+orbit -p paybook confluence create --space FO --parent 473677299713 \
   --title "Quick Note" --body "<p>Remember to update the docs</p>"
 ```
 
@@ -125,7 +125,7 @@ aidlc -p paybook confluence create --space FO --parent 473677299713 \
 Update an existing Confluence page. Automatically increments the version number.
 
 ```bash
-aidlc -p profile confluence update <page-id> [flags]
+orbit -p profile confluence update <page-id> [flags]
 ```
 
 **Flags:**
@@ -140,14 +140,14 @@ aidlc -p profile confluence update <page-id> [flags]
 
 ```bash
 # Update content from markdown
-aidlc -p paybook confluence update 473676972036 --file docs/overview.md
+orbit -p paybook confluence update 473676972036 --file docs/overview.md
 
 # Update title and content
-aidlc -p paybook confluence update 473676972036 \
+orbit -p paybook confluence update 473676972036 \
   --title "Updated Overview" --file docs/overview.md
 
 # Update with inline content
-aidlc -p paybook confluence update 473676972036 \
+orbit -p paybook confluence update 473676972036 \
   --body "<p>Updated content</p>"
 ```
 
@@ -163,7 +163,7 @@ aidlc -p paybook confluence update 473676972036 \
 Recursively publish a directory of markdown files to Confluence, preserving folder hierarchy.
 
 ```bash
-aidlc -p profile confluence publish <directory> [flags]
+orbit -p profile confluence publish <directory> [flags]
 ```
 
 **Flags:**
@@ -178,10 +178,10 @@ aidlc -p profile confluence publish <directory> [flags]
 
 ```bash
 # Preview the publish plan
-aidlc -p paybook confluence publish ./docs --space FO --parent 473677299713 --dry-run
+orbit -p paybook confluence publish ./docs --space FO --parent 473677299713 --dry-run
 
 # Publish for real
-aidlc -p paybook confluence publish ./docs --space FO --parent 473677299713
+orbit -p paybook confluence publish ./docs --space FO --parent 473677299713
 ```
 
 **Directory Structure Rules:**
@@ -218,7 +218,7 @@ docs/
 Set the content width of one or more pages.
 
 ```bash
-aidlc -p profile confluence set-width <page-id...> [flags]
+orbit -p profile confluence set-width <page-id...> [flags]
 ```
 
 **Flags:**
@@ -232,16 +232,16 @@ aidlc -p profile confluence set-width <page-id...> [flags]
 
 ```bash
 # Set single page to wide
-aidlc -p paybook confluence set-width 473676972036
+orbit -p paybook confluence set-width 473676972036
 
 # Set multiple pages
-aidlc -p paybook confluence set-width 473676972036 473677103107
+orbit -p paybook confluence set-width 473676972036 473677103107
 
 # Set page and all descendants to wide
-aidlc -p paybook confluence set-width 473677299713 --recursive
+orbit -p paybook confluence set-width 473677299713 --recursive
 
 # Set to fixed width
-aidlc -p paybook confluence set-width 473676972036 --width fixed
+orbit -p paybook confluence set-width 473676972036 --width fixed
 ```
 
 **Notes:**

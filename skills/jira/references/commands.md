@@ -1,6 +1,6 @@
-# aidlc Jira Commands Reference
+# orbit Jira Commands Reference
 
-Complete reference for all `aidlc jira` commands with flags and examples.
+Complete reference for all `orbit jira` commands with flags and examples.
 
 ## Table of Contents
 
@@ -36,7 +36,7 @@ These flags are available on all jira subcommands:
 | `-p, --profile` | Profile to use (overrides default) |
 | `-o, --output` | Output format: table, json, yaml (default: table) |
 | `--service` | Jira service name (if profile has multiple jira services) |
-| `--config` | Config file path (default: ~/.config/aidlc/config.yaml) |
+| `--config` | Config file path (default: ~/.config/orbit/config.yaml) |
 
 ---
 
@@ -49,7 +49,7 @@ List and search issues with filtering.
 **Aliases:** `ls`, `search`
 
 ```bash
-aidlc -p profile jira issue list [flags]
+orbit -p profile jira issue list [flags]
 ```
 
 **Flags:**
@@ -80,10 +80,10 @@ aidlc -p profile jira issue list [flags]
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira issue list --project PRT
-aidlc -p epsilon jira issue list --assignee me --status "In Progress"
-aidlc -p epsilon jira issue list --jql "project = PRT AND issuetype = Epic"
-aidlc -p epsilon jira issue list --project PRT --type Epic -o json
+orbit -p epsilon jira issue list --project PRT
+orbit -p epsilon jira issue list --assignee me --status "In Progress"
+orbit -p epsilon jira issue list --jql "project = PRT AND issuetype = Epic"
+orbit -p epsilon jira issue list --project PRT --type Epic -o json
 ```
 
 ---
@@ -95,7 +95,7 @@ View detailed issue information.
 **Aliases:** `show`
 
 ```bash
-aidlc -p profile jira issue view <issue-key> [flags]
+orbit -p profile jira issue view <issue-key> [flags]
 ```
 
 **Flags:**
@@ -107,9 +107,9 @@ aidlc -p profile jira issue view <issue-key> [flags]
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira issue view PRT-4373
-aidlc -p epsilon jira issue view PRT-4373 --comments 5
-aidlc -p epsilon jira issue view PRT-4373 -o json
+orbit -p epsilon jira issue view PRT-4373
+orbit -p epsilon jira issue view PRT-4373 --comments 5
+orbit -p epsilon jira issue view PRT-4373 -o json
 ```
 
 ---
@@ -119,7 +119,7 @@ aidlc -p epsilon jira issue view PRT-4373 -o json
 Create a new issue.
 
 ```bash
-aidlc -p profile jira issue create [flags]
+orbit -p profile jira issue create [flags]
 ```
 
 **Flags:**
@@ -146,17 +146,17 @@ aidlc -p profile jira issue create [flags]
 
 ```bash
 # Simple story
-aidlc -p epsilon jira issue create --project PRT --type Story \
+orbit -p epsilon jira issue create --project PRT --type Story \
   --summary "Add login page"
 
 # Epic with Parent Link
-aidlc -p epsilon jira issue create --type Epic --project PRT \
+orbit -p epsilon jira issue create --type Epic --project PRT \
   --summary "Okta Authentication Foundation" \
   --priority Highest \
   --field "customfield_27521=PRT-4378"
 
 # Bug with labels and components
-aidlc -p epsilon jira issue create --project PRT --type Bug \
+orbit -p epsilon jira issue create --project PRT --type Bug \
   --summary "Fix timeout" --priority High \
   --label backend --label urgent --component api
 ```
@@ -174,7 +174,7 @@ Edit an existing issue.
 **Aliases:** `update`
 
 ```bash
-aidlc -p profile jira issue edit <issue-key> [flags]
+orbit -p profile jira issue edit <issue-key> [flags]
 ```
 
 **Flags:**
@@ -191,10 +191,10 @@ aidlc -p profile jira issue edit <issue-key> [flags]
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira issue edit PRT-123 --summary "Updated title"
-aidlc -p epsilon jira issue edit PRT-123 --priority Critical
-aidlc -p epsilon jira issue edit PRT-123 --label new-label --label -old-label
-aidlc -p epsilon jira issue edit PRT-123 --body "h2. Updated Description
+orbit -p epsilon jira issue edit PRT-123 --summary "Updated title"
+orbit -p epsilon jira issue edit PRT-123 --priority Critical
+orbit -p epsilon jira issue edit PRT-123 --label new-label --label -old-label
+orbit -p epsilon jira issue edit PRT-123 --body "h2. Updated Description
 
 * New bullet point
 * Another point"
@@ -207,7 +207,7 @@ aidlc -p epsilon jira issue edit PRT-123 --body "h2. Updated Description
 Assign or unassign an issue.
 
 ```bash
-aidlc -p profile jira issue assign <issue-key> <assignee>
+orbit -p profile jira issue assign <issue-key> <assignee>
 ```
 
 Use `x` as assignee to unassign.
@@ -215,8 +215,8 @@ Use `x` as assignee to unassign.
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira issue assign PRT-123 john.doe
-aidlc -p epsilon jira issue assign PRT-123 x    # unassign
+orbit -p epsilon jira issue assign PRT-123 john.doe
+orbit -p epsilon jira issue assign PRT-123 x    # unassign
 ```
 
 ---
@@ -228,7 +228,7 @@ Transition an issue to a new workflow state.
 **Aliases:** `transition`
 
 ```bash
-aidlc -p profile jira issue move <issue-key> <state> [flags]
+orbit -p profile jira issue move <issue-key> <state> [flags]
 ```
 
 **Flags:**
@@ -241,9 +241,9 @@ aidlc -p profile jira issue move <issue-key> <state> [flags]
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira issue move PRT-123 "In Progress"
-aidlc -p epsilon jira issue move PRT-123 Done --comment "Fixed in v2.1"
-aidlc -p epsilon jira issue move PRT-123 Done --resolution Fixed
+orbit -p epsilon jira issue move PRT-123 "In Progress"
+orbit -p epsilon jira issue move PRT-123 Done --comment "Fixed in v2.1"
+orbit -p epsilon jira issue move PRT-123 Done --resolution Fixed
 ```
 
 ---
@@ -255,7 +255,7 @@ Delete an issue.
 **Aliases:** `rm`, `remove`
 
 ```bash
-aidlc -p profile jira issue delete <issue-key> [flags]
+orbit -p profile jira issue delete <issue-key> [flags]
 ```
 
 **Flags:**
@@ -271,13 +271,13 @@ aidlc -p profile jira issue delete <issue-key> [flags]
 Add a comment to an issue.
 
 ```bash
-aidlc -p profile jira issue comment <issue-key> <body...>
+orbit -p profile jira issue comment <issue-key> <body...>
 ```
 
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira issue comment PRT-123 "This is fixed now"
+orbit -p epsilon jira issue comment PRT-123 "This is fixed now"
 ```
 
 ---
@@ -287,14 +287,14 @@ aidlc -p epsilon jira issue comment PRT-123 "This is fixed now"
 Link two issues together.
 
 ```bash
-aidlc -p profile jira issue link <inward-key> <outward-key> <link-type>
+orbit -p profile jira issue link <inward-key> <outward-key> <link-type>
 ```
 
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira issue link PRT-100 PRT-200 Blocks
-aidlc -p epsilon jira issue link PRT-100 PRT-200 Duplicates
+orbit -p epsilon jira issue link PRT-100 PRT-200 Blocks
+orbit -p epsilon jira issue link PRT-100 PRT-200 Duplicates
 ```
 
 ---
@@ -304,7 +304,7 @@ aidlc -p epsilon jira issue link PRT-100 PRT-200 Duplicates
 Remove a link between two issues.
 
 ```bash
-aidlc -p profile jira issue unlink <inward-key> <outward-key>
+orbit -p profile jira issue unlink <inward-key> <outward-key>
 ```
 
 ---
@@ -314,7 +314,7 @@ aidlc -p profile jira issue unlink <inward-key> <outward-key>
 Log time spent on an issue.
 
 ```bash
-aidlc -p profile jira issue worklog <issue-key> <time-spent> [flags]
+orbit -p profile jira issue worklog <issue-key> <time-spent> [flags]
 ```
 
 **Flags:**
@@ -326,8 +326,8 @@ aidlc -p profile jira issue worklog <issue-key> <time-spent> [flags]
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira issue worklog PRT-123 "2h 30m"
-aidlc -p epsilon jira issue worklog PRT-123 "1d" --comment "Code review"
+orbit -p epsilon jira issue worklog PRT-123 "2h 30m"
+orbit -p epsilon jira issue worklog PRT-123 "1d" --comment "Code review"
 ```
 
 ---
@@ -337,7 +337,7 @@ aidlc -p epsilon jira issue worklog PRT-123 "1d" --comment "Code review"
 Clone an issue with optional modifications.
 
 ```bash
-aidlc -p profile jira issue clone <issue-key> [flags]
+orbit -p profile jira issue clone <issue-key> [flags]
 ```
 
 **Flags:**
@@ -350,9 +350,9 @@ aidlc -p profile jira issue clone <issue-key> [flags]
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira issue clone PRT-123
-aidlc -p epsilon jira issue clone PRT-123 --summary "Cloned: new title"
-aidlc -p epsilon jira issue clone PRT-123 --replace "v1:v2"
+orbit -p epsilon jira issue clone PRT-123
+orbit -p epsilon jira issue clone PRT-123 --summary "Cloned: new title"
+orbit -p epsilon jira issue clone PRT-123 --replace "v1:v2"
 ```
 
 ---
@@ -366,7 +366,7 @@ List epics or issues within an epic.
 **Aliases:** `ls`
 
 ```bash
-aidlc -p profile jira epic list [epic-key] [flags]
+orbit -p profile jira epic list [epic-key] [flags]
 ```
 
 **Flags:**
@@ -380,8 +380,8 @@ aidlc -p profile jira epic list [epic-key] [flags]
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira epic list --project PRT
-aidlc -p epsilon jira epic list PRT-50    # issues in epic PRT-50
+orbit -p epsilon jira epic list --project PRT
+orbit -p epsilon jira epic list PRT-50    # issues in epic PRT-50
 ```
 
 ### epic create
@@ -389,7 +389,7 @@ aidlc -p epsilon jira epic list PRT-50    # issues in epic PRT-50
 Create a new epic.
 
 ```bash
-aidlc -p profile jira epic create [flags]
+orbit -p profile jira epic create [flags]
 ```
 
 **Flags:**
@@ -409,7 +409,7 @@ aidlc -p profile jira epic create [flags]
 Add issues to an epic (max 50).
 
 ```bash
-aidlc -p profile jira epic add <epic-key> <issue-keys...>
+orbit -p profile jira epic add <epic-key> <issue-keys...>
 ```
 
 ### epic remove
@@ -417,7 +417,7 @@ aidlc -p profile jira epic add <epic-key> <issue-keys...>
 Remove issues from their epic (max 50).
 
 ```bash
-aidlc -p profile jira epic remove <issue-keys...>
+orbit -p profile jira epic remove <issue-keys...>
 ```
 
 ---
@@ -429,7 +429,7 @@ aidlc -p profile jira epic remove <issue-keys...>
 List sprints or issues in a sprint.
 
 ```bash
-aidlc -p profile jira sprint list [sprint-id] [flags]
+orbit -p profile jira sprint list [sprint-id] [flags]
 ```
 
 **Flags:**
@@ -445,7 +445,7 @@ aidlc -p profile jira sprint list [sprint-id] [flags]
 Add issues to a sprint (max 50).
 
 ```bash
-aidlc -p profile jira sprint add <sprint-id> <issue-keys...>
+orbit -p profile jira sprint add <sprint-id> <issue-keys...>
 ```
 
 ---
@@ -457,7 +457,7 @@ aidlc -p profile jira sprint add <sprint-id> <issue-keys...>
 List boards.
 
 ```bash
-aidlc -p profile jira board list [flags]
+orbit -p profile jira board list [flags]
 ```
 
 **Flags:**
@@ -475,7 +475,7 @@ aidlc -p profile jira board list [flags]
 List all accessible projects.
 
 ```bash
-aidlc -p profile jira project list
+orbit -p profile jira project list
 ```
 
 ---
@@ -487,7 +487,7 @@ aidlc -p profile jira project list
 List project versions/releases.
 
 ```bash
-aidlc -p profile jira release list --project <key>
+orbit -p profile jira release list --project <key>
 ```
 
 ---
@@ -499,7 +499,7 @@ aidlc -p profile jira release list --project <key>
 List Jira fields. Essential for discovering custom field IDs.
 
 ```bash
-aidlc -p profile jira field-list [flags]
+orbit -p profile jira field-list [flags]
 ```
 
 **Flags:**
@@ -511,15 +511,15 @@ aidlc -p profile jira field-list [flags]
 **Examples:**
 
 ```bash
-aidlc -p epsilon jira field-list --filter "parent"
-aidlc -p epsilon jira field-list --filter "epic"
-aidlc -p epsilon jira field-list --filter "client"
+orbit -p epsilon jira field-list --filter "parent"
+orbit -p epsilon jira field-list --filter "epic"
+orbit -p epsilon jira field-list --filter "client"
 ```
 
 **Common custom fields (instance-specific):**
 
 | Field | Typical ID | Usage |
 |-------|-----------|-------|
-| Epic Name | customfield_11523 | Required for Epic creation (auto-set by aidlc) |
+| Epic Name | customfield_11523 | Required for Epic creation (auto-set by orbit) |
 | Parent Link | customfield_27521 | Links epics to initiatives/capabilities |
 | Epic Link | customfield_11522 | Links stories to epics |

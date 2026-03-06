@@ -3,7 +3,7 @@ package service
 import (
 	"testing"
 
-	"github.com/jorgemuza/aidlc-cli/internal/config"
+	"github.com/jorgemuza/orbit/internal/config"
 )
 
 type mockService struct {

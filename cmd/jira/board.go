@@ -3,8 +3,8 @@ package jira
 import (
 	"fmt"
 
-	"github.com/jorgemuza/aidlc-cli/cmd/cmdutil"
-	"github.com/jorgemuza/aidlc-cli/internal/output"
+	"github.com/jorgemuza/orbit/cmd/cmdutil"
+	"github.com/jorgemuza/orbit/internal/output"
 	"github.com/spf13/cobra"
 )
 
@@ -24,8 +24,8 @@ var boardListCmd = &cobra.Command{
 	Use:     "list",
 	Aliases: []string{"ls"},
 	Short:   "List boards",
-	Example: `  aidlc jira board list
-  aidlc jira board list --project PROJ`,
+	Example: `  orbit jira board list
+  orbit jira board list --project PROJ`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveJiraClient(cmd)
 		if err != nil {

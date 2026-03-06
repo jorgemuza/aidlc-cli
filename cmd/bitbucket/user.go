@@ -18,7 +18,7 @@ var userCmd = &cobra.Command{
 var userListCmd = &cobra.Command{
 	Use:     "list",
 	Short:   "List users",
-	Example: `  aidlc bb user list --filter john`,
+	Example: `  orbit bb user list --filter john`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveBBClient(cmd)
 		if err != nil {

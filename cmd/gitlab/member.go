@@ -19,7 +19,7 @@ var memberListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List project members",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab member list 595`,
+	Example: `  orbit gitlab member list 595`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {

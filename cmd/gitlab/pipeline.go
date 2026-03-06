@@ -21,8 +21,8 @@ var pipelineListCmd = &cobra.Command{
 	Use:   "list [project]",
 	Short: "List pipelines",
 	Args:  cobra.ExactArgs(1),
-	Example: `  aidlc gitlab pipeline list 595
-  aidlc gitlab pipeline list 595 --ref main --status success`,
+	Example: `  orbit gitlab pipeline list 595
+  orbit gitlab pipeline list 595 --ref main --status success`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -66,7 +66,7 @@ var pipelineViewCmd = &cobra.Command{
 	Use:   "view [project] [pipeline-id]",
 	Short: "View a pipeline",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab pipeline view 595 12345`,
+	Example: `  orbit gitlab pipeline view 595 12345`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -105,7 +105,7 @@ var pipelineJobsCmd = &cobra.Command{
 	Use:   "jobs [project] [pipeline-id]",
 	Short: "List jobs in a pipeline",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab pipeline jobs 595 12345`,
+	Example: `  orbit gitlab pipeline jobs 595 12345`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -147,7 +147,7 @@ var pipelineRetryCmd = &cobra.Command{
 	Use:   "retry [project] [pipeline-id]",
 	Short: "Retry a pipeline",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab pipeline retry 595 12345`,
+	Example: `  orbit gitlab pipeline retry 595 12345`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
@@ -173,7 +173,7 @@ var pipelineCancelCmd = &cobra.Command{
 	Use:   "cancel [project] [pipeline-id]",
 	Short: "Cancel a pipeline",
 	Args:  cobra.ExactArgs(2),
-	Example: `  aidlc gitlab pipeline cancel 595 12345`,
+	Example: `  orbit gitlab pipeline cancel 595 12345`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, err := resolveGitLabClient(cmd)
 		if err != nil {
