@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	cmdbitbucket "github.com/jorgemuza/aidlc-cli/cmd/bitbucket"
 	cmdconfluence "github.com/jorgemuza/aidlc-cli/cmd/confluence"
+	cmdgitlab "github.com/jorgemuza/aidlc-cli/cmd/gitlab"
 	cmdjira "github.com/jorgemuza/aidlc-cli/cmd/jira"
 	"github.com/jorgemuza/aidlc-cli/cmd/profile"
 	cmdservice "github.com/jorgemuza/aidlc-cli/cmd/service"
@@ -46,6 +48,8 @@ func init() {
 	rootCmd.AddCommand(cmdservice.Command)
 	rootCmd.AddCommand(cmdjira.Command)
 	rootCmd.AddCommand(cmdconfluence.Command)
+	rootCmd.AddCommand(cmdgitlab.Command)
+	rootCmd.AddCommand(cmdbitbucket.Command)
 	rootCmd.AddCommand(version.Command)
 
 	rootCmd.SilenceUsage = true
