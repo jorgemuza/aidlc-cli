@@ -1,9 +1,13 @@
 package github
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"fmt"
 	"net/url"
 	"strings"
+
+	"golang.org/x/crypto/nacl/box"
 
 	"github.com/jorgemuza/orbit/internal/service"
 )
@@ -500,6 +504,82 @@ func (c *Client) RerunWorkflowRun(owner, repo string, runID int) error {
 		return fmt.Errorf("rerunning workflow run: %w", err)
 	}
 	return nil
+}
+
+// --- Actions Secrets operations ---
+
+type Secret struct {
+	Name      string `json:"name"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+type PublicKey struct {
+	KeyID string `json:"key_id"`
+	Key   string `json:"key"`
+}
+
+func (c *Client) ListRepoSecrets(owner, repo string, perPage int) ([]Secret, error) {
+	var result struct {
+		Secrets []Secret `json:"secrets"`
+	}
+	if err := c.DoGet(fmt.Sprintf("/repos/%s/%s/actions/secrets?per_page=%d", owner, repo, perPage), &result); err != nil {
+		return nil, fmt.Errorf("listing secrets: %w", err)
+	}
+	return result.Secrets, nil
+}
+
+func (c *Client) GetRepoPublicKey(owner, repo string) (*PublicKey, error) {
+	var pk PublicKey
+	if err := c.DoGet(fmt.Sprintf("/repos/%s/%s/actions/secrets/public-key", owner, repo), &pk); err != nil {
+		return nil, fmt.Errorf("getting public key: %w", err)
+	}
+	return &pk, nil
+}
+
+func (c *Client) SetRepoSecret(owner, repo, secretName, secretValue string) error {
+	pk, err := c.GetRepoPublicKey(owner, repo)
+	if err != nil {
+		return err
+	}
+
+	encrypted, err := encryptSecret(pk.Key, secretValue)
+	if err != nil {
+		return fmt.Errorf("encrypting secret: %w", err)
+	}
+
+	payload := map[string]string{
+		"encrypted_value": encrypted,
+		"key_id":          pk.KeyID,
+	}
+	if err := c.DoPut(fmt.Sprintf("/repos/%s/%s/actions/secrets/%s", owner, repo, url.PathEscape(secretName)), payload, nil); err != nil {
+		return fmt.Errorf("setting secret: %w", err)
+	}
+	return nil
+}
+
+func (c *Client) DeleteRepoSecret(owner, repo, secretName string) error {
+	if err := c.DoDelete(fmt.Sprintf("/repos/%s/%s/actions/secrets/%s", owner, repo, url.PathEscape(secretName))); err != nil {
+		return fmt.Errorf("deleting secret: %w", err)
+	}
+	return nil
+}
+
+func encryptSecret(publicKeyB64, secretValue string) (string, error) {
+	publicKeyBytes, err := base64.StdEncoding.DecodeString(publicKeyB64)
+	if err != nil {
+		return "", fmt.Errorf("decoding public key: %w", err)
+	}
+
+	var recipientKey [32]byte
+	copy(recipientKey[:], publicKeyBytes)
+
+	encrypted, err := box.SealAnonymous(nil, []byte(secretValue), &recipientKey, rand.Reader)
+	if err != nil {
+		return "", fmt.Errorf("sealing secret: %w", err)
+	}
+
+	return base64.StdEncoding.EncodeToString(encrypted), nil
 }
 
 // OwnerRepo parses "owner/repo" into separate parts.

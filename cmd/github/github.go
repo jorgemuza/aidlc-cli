@@ -31,6 +31,7 @@ func init() {
 	Command.AddCommand(issueCmd)
 	Command.AddCommand(releaseCmd)
 	Command.AddCommand(runCmd)
+	Command.AddCommand(secretCmd)
 	Command.AddCommand(userCmd)
 }
 
