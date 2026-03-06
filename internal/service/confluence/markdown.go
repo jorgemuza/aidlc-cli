@@ -13,6 +13,9 @@ func MarkdownToStorage(md string) string {
 	// Strip YAML frontmatter
 	md = stripFrontmatter(md)
 
+	// Convert document metadata lines (**Key**: Value) into a two-column table
+	md = convertMetadataBlock(md)
+
 	lines := strings.Split(md, "\n")
 	var out []string
 	inCodeBlock := false
@@ -33,9 +36,9 @@ func MarkdownToStorage(md string) string {
 				// Close code block
 				code := escapeXML(strings.Join(codeLines, "\n"))
 				if codeLang != "" {
-					out = append(out, fmt.Sprintf(`<ac:structured-macro ac:name="code"><ac:parameter ac:name="language">%s</ac:parameter><ac:plain-text-body><![CDATA[%s]]></ac:plain-text-body></ac:structured-macro>`, codeLang, code))
+					out = append(out, fmt.Sprintf(`<div class="code-block" data-layout="full-width"><ac:structured-macro ac:name="code"><ac:parameter ac:name="language">%s</ac:parameter><ac:plain-text-body><![CDATA[%s]]></ac:plain-text-body></ac:structured-macro></div>`, codeLang, code))
 				} else {
-					out = append(out, fmt.Sprintf(`<ac:structured-macro ac:name="code"><ac:plain-text-body><![CDATA[%s]]></ac:plain-text-body></ac:structured-macro>`, code))
+					out = append(out, fmt.Sprintf(`<div class="code-block" data-layout="full-width"><ac:structured-macro ac:name="code"><ac:plain-text-body><![CDATA[%s]]></ac:plain-text-body></ac:structured-macro></div>`, code))
 				}
 				inCodeBlock = false
 				codeLang = ""
@@ -72,13 +75,8 @@ func MarkdownToStorage(md string) string {
 			continue
 		}
 
-		// Horizontal rule
+		// Horizontal rule — skip entirely, not useful in Confluence
 		if trimmed == "---" || trimmed == "***" || trimmed == "___" {
-			if inList {
-				out = append(out, closeList(listTag))
-				inList = false
-			}
-			out = append(out, "<hr />")
 			continue
 		}
 
@@ -103,7 +101,7 @@ func MarkdownToStorage(md string) string {
 			// and skip all lines until the next heading or hr
 			headingLower := strings.ToLower(heading)
 			if headingLower == "table of contents" || headingLower == "contents" || headingLower == "toc" {
-				out = append(out, `<ac:structured-macro ac:name="toc"><ac:parameter ac:name="printable">true</ac:parameter><ac:parameter ac:name="style">disc</ac:parameter><ac:parameter ac:name="maxLevel">3</ac:parameter><ac:parameter ac:name="minLevel">2</ac:parameter></ac:structured-macro>`)
+				out = append(out, `<ac:structured-macro ac:name="toc"><ac:parameter ac:name="printable">true</ac:parameter><ac:parameter ac:name="style">none</ac:parameter><ac:parameter ac:name="maxLevel">3</ac:parameter><ac:parameter ac:name="minLevel">2</ac:parameter></ac:structured-macro>`)
 				inTocSection = true
 				continue
 			}
@@ -138,7 +136,7 @@ func MarkdownToStorage(md string) string {
 			cells := parseTableRow(trimmed)
 			if !inTable {
 				// First row is header
-				out = append(out, "<table><thead><tr>")
+				out = append(out, `<table data-layout="full-width"><thead><tr>`)
 				for _, cell := range cells {
 					out = append(out, fmt.Sprintf("<th>%s</th>", convertInline(cell)))
 				}
@@ -290,6 +288,7 @@ var (
 	reStrike     = regexp.MustCompile(`~~(.+?)~~`)
 	reLink       = regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
 	reImage      = regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
+	reMetadata   = regexp.MustCompile(`^\*\*(.+?)\*\*:\s*(.+)$`)
 )
 
 func convertInline(text string) string {
@@ -327,6 +326,51 @@ func convertInline(text string) string {
 		return "<em>" + m[1] + "</em>"
 	})
 	return text
+}
+
+// convertMetadataBlock detects consecutive **Key**: Value lines at the start
+// of the document (before any heading) and replaces them with a pre-rendered
+// Confluence two-column table with the first column in gray.
+func convertMetadataBlock(md string) string {
+	lines := strings.Split(md, "\n")
+	var metaRows [][]string
+	consumed := 0
+
+	for _, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" {
+			if len(metaRows) > 0 {
+				consumed++
+			}
+			continue
+		}
+		m := reMetadata.FindStringSubmatch(trimmed)
+		if m == nil {
+			break
+		}
+		metaRows = append(metaRows, []string{m[1], m[2]})
+		consumed++
+	}
+
+	if len(metaRows) == 0 {
+		return md
+	}
+
+	// Build the table with gray first column
+	var tbl strings.Builder
+	tbl.WriteString(`<table data-layout="full-width"><tbody>`)
+	for _, row := range metaRows {
+		tbl.WriteString(fmt.Sprintf(`<tr><td style="background-color: #f4f5f7;"><strong>%s</strong></td><td>%s</td></tr>`, row[0], row[1]))
+	}
+	tbl.WriteString(`</tbody></table>`)
+
+	// Skip consumed lines and any trailing blank lines
+	rest := lines[consumed:]
+	for len(rest) > 0 && strings.TrimSpace(rest[0]) == "" {
+		rest = rest[1:]
+	}
+
+	return tbl.String() + "\n" + strings.Join(rest, "\n")
 }
 
 func escapeXML(s string) string {
