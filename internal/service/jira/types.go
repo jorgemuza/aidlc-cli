@@ -324,3 +324,68 @@ type LinkRequest struct {
 	InwardIssue  map[string]string `json:"inwardIssue"`
 	OutwardIssue map[string]string `json:"outwardIssue"`
 }
+
+// Field represents a Jira field definition.
+type Field struct {
+	ID          string            `json:"id"`
+	Name        string            `json:"name"`
+	Description string            `json:"description,omitempty"`
+	Custom      bool              `json:"custom"`
+	Schema      *FieldSchema      `json:"schema,omitempty"`
+}
+
+// FieldSchema describes a field's type information.
+type FieldSchema struct {
+	Type     string `json:"type"`
+	Custom   string `json:"custom,omitempty"`
+	CustomID int    `json:"customId,omitempty"`
+	System   string `json:"system,omitempty"`
+}
+
+// CreateFieldRequest is the payload for creating a custom field (Cloud only).
+type CreateFieldRequest struct {
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Type        string `json:"type"`
+	SearcherKey string `json:"searcherKey,omitempty"`
+}
+
+// CreatedField is the response from creating a custom field.
+type CreatedField struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	Schema      *FieldSchema `json:"schema,omitempty"`
+}
+
+// FieldContext represents a field configuration context.
+type FieldContext struct {
+	ID          string `json:"id"`
+	Name        string `json:"name"`
+	Description string `json:"description,omitempty"`
+	IsGlobal    bool   `json:"isGlobalContext"`
+	IsAnyIssue  bool   `json:"isAnyIssueType"`
+}
+
+// FieldOption represents an option for a select/multi-select field.
+type FieldOption struct {
+	ID       string `json:"id"`
+	Value    string `json:"value"`
+	Disabled bool   `json:"disabled"`
+}
+
+// Status represents a Jira workflow status.
+type Status struct {
+	ID             string          `json:"id"`
+	Name           string          `json:"name"`
+	Description    string          `json:"description,omitempty"`
+	StatusCategory *StatusCategory `json:"statusCategory,omitempty"`
+}
+
+// StatusCategory groups statuses into categories (To Do, In Progress, Done).
+type StatusCategory struct {
+	ID        int    `json:"id"`
+	Key       string `json:"key"`
+	Name      string `json:"name"`
+	ColorName string `json:"colorName"`
+}

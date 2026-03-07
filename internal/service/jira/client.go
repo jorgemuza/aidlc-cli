@@ -381,3 +381,122 @@ func (c *Client) ListVersions(projectKey string) ([]Version, error) {
 	}
 	return versions, nil
 }
+
+// ListFields lists all fields (system and custom).
+func (c *Client) ListFields() ([]Field, error) {
+	var fields []Field
+	if err := c.DoGet(c.apiPrefix()+"/field", &fields); err != nil {
+		return nil, fmt.Errorf("listing fields: %w", err)
+	}
+	return fields, nil
+}
+
+// CreateField creates a custom field (Cloud only).
+func (c *Client) CreateField(req *CreateFieldRequest) (*CreatedField, error) {
+	if !c.isCloud() {
+		return nil, fmt.Errorf("create-field is only supported on Jira Cloud")
+	}
+	var result CreatedField
+	if err := c.DoPost(c.apiPrefix()+"/field", req, &result); err != nil {
+		return nil, fmt.Errorf("creating field: %w", err)
+	}
+	return &result, nil
+}
+
+// ListFieldContexts lists contexts for a custom field (Cloud only).
+func (c *Client) ListFieldContexts(fieldID string) ([]FieldContext, error) {
+	if !c.isCloud() {
+		return nil, fmt.Errorf("field contexts are only supported on Jira Cloud")
+	}
+	path := fmt.Sprintf(c.apiPrefix()+"/field/%s/context", url.PathEscape(fieldID))
+	var result struct {
+		Values []FieldContext `json:"values"`
+	}
+	if err := c.DoGet(path, &result); err != nil {
+		return nil, fmt.Errorf("listing field contexts for %s: %w", fieldID, err)
+	}
+	return result.Values, nil
+}
+
+// CreateFieldContext creates a context for a custom field (Cloud only).
+func (c *Client) CreateFieldContext(fieldID, name, description string, issueTypeIDs, projectIDs []string, isGlobal bool) (*FieldContext, error) {
+	if !c.isCloud() {
+		return nil, fmt.Errorf("field contexts are only supported on Jira Cloud")
+	}
+	path := fmt.Sprintf(c.apiPrefix()+"/field/%s/context", url.PathEscape(fieldID))
+	body := map[string]any{
+		"name":            name,
+		"description":     description,
+		"isGlobalContext": isGlobal,
+		"isAnyIssueType":  len(issueTypeIDs) == 0,
+	}
+	if len(issueTypeIDs) > 0 {
+		body["issueTypeIds"] = issueTypeIDs
+	}
+	if len(projectIDs) > 0 {
+		body["projectIds"] = projectIDs
+	}
+	var result struct {
+		Values []FieldContext `json:"values"`
+	}
+	if err := c.DoPost(path, body, &result); err != nil {
+		return nil, fmt.Errorf("creating field context for %s: %w", fieldID, err)
+	}
+	if len(result.Values) == 0 {
+		return nil, fmt.Errorf("no context returned")
+	}
+	return &result.Values[0], nil
+}
+
+// ListFieldOptions lists options for a select/multi-select custom field context (Cloud only).
+func (c *Client) ListFieldOptions(fieldID, contextID string) ([]FieldOption, error) {
+	if !c.isCloud() {
+		return nil, fmt.Errorf("field options are only supported on Jira Cloud")
+	}
+	path := fmt.Sprintf(c.apiPrefix()+"/field/%s/context/%s/option", url.PathEscape(fieldID), url.PathEscape(contextID))
+	var result struct {
+		Values []FieldOption `json:"values"`
+	}
+	if err := c.DoGet(path, &result); err != nil {
+		return nil, fmt.Errorf("listing field options: %w", err)
+	}
+	return result.Values, nil
+}
+
+// AddFieldOptions adds options to a select/multi-select custom field context (Cloud only).
+func (c *Client) AddFieldOptions(fieldID, contextID string, values []string) ([]FieldOption, error) {
+	if !c.isCloud() {
+		return nil, fmt.Errorf("field options are only supported on Jira Cloud")
+	}
+	path := fmt.Sprintf(c.apiPrefix()+"/field/%s/context/%s/option", url.PathEscape(fieldID), url.PathEscape(contextID))
+	options := make([]map[string]any, len(values))
+	for i, v := range values {
+		options[i] = map[string]any{"value": v}
+	}
+	body := map[string]any{"options": options}
+	var result struct {
+		Options []FieldOption `json:"options"`
+	}
+	if err := c.DoPost(path, body, &result); err != nil {
+		return nil, fmt.Errorf("adding field options: %w", err)
+	}
+	return result.Options, nil
+}
+
+// ListStatuses lists all workflow statuses.
+func (c *Client) ListStatuses() ([]Status, error) {
+	var statuses []Status
+	if err := c.DoGet(c.apiPrefix()+"/status", &statuses); err != nil {
+		return nil, fmt.Errorf("listing statuses: %w", err)
+	}
+	return statuses, nil
+}
+
+// ListIssueTypes lists all issue types.
+func (c *Client) ListIssueTypes() ([]NameField, error) {
+	var issueTypes []NameField
+	if err := c.DoGet(c.apiPrefix()+"/issuetype", &issueTypes); err != nil {
+		return nil, fmt.Errorf("listing issue types: %w", err)
+	}
+	return issueTypes, nil
+}

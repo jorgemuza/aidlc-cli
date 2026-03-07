@@ -27,7 +27,9 @@ func init() {
 	Command.AddCommand(boardCmd)
 	Command.AddCommand(projectCmd)
 	Command.AddCommand(releaseCmd)
-	Command.AddCommand(fieldListCmd)
+	Command.AddCommand(fieldCmd)
+	Command.AddCommand(statusCmd)
+	Command.AddCommand(issueTypeListCmd)
 }
 
 // resolveJiraClient resolves the Jira client from the active profile.
