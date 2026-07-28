@@ -347,6 +347,7 @@ orbit -p profile confluence publish <directory> [flags]
 | `--space` | string | Confluence space key (**required**) |
 | `--parent` | string | Parent page ID (**required**) |
 | `--dry-run` | bool | Preview without creating pages |
+| `--no-kroki` | bool | Disable Kroki diagram rendering for the whole run; leave diagram code blocks as preformatted text |
 
 **Examples:**
 
@@ -356,6 +357,9 @@ orbit -p paybook confluence publish ./docs --space FO --parent 473677299713 --dr
 
 # Publish for real
 orbit -p paybook confluence publish ./docs --space FO --parent 473677299713
+
+# Publish without rendering diagrams via Kroki (leave them as code blocks)
+orbit -p paybook confluence publish ./docs --space FO --parent 473677299713 --no-kroki
 ```
 
 **Directory Structure Rules:**
@@ -390,6 +394,7 @@ The `publish` command recognizes the following YAML frontmatter fields:
 | `confluence_url` | string | Page URL (set after publish) |
 | `confluence_labels` | list | Labels/tags applied to the page after create/update |
 | `confluence_properties` | map | Page Properties macro prepended to page content |
+| `confluence_disable_kroki` | bool | When `true`, skip Kroki rendering for this file; leave diagram code blocks as preformatted text |
 
 ### Labels
 

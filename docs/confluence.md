@@ -381,6 +381,7 @@ orbit confluence publish [directory] [flags]
 | `--space` | Yes | Confluence space key |
 | `--parent` | Yes | Parent page ID under which the pages will be published |
 | `--dry-run` | No | Preview what would be published without making any changes |
+| `--no-kroki` | No | Disable Kroki diagram rendering for the whole run; leave diagram code blocks as preformatted text |
 
 ### Directory Structure Rules
 
@@ -413,6 +414,9 @@ orbit confluence publish ./docs --space ENG --parent 123456789 -p myprofile
 
 # Preview what would be published (no changes made)
 orbit confluence publish ./docs --space ENG --parent 123456789 --dry-run -p myprofile
+
+# Publish without rendering diagrams via Kroki (leave them as code blocks)
+orbit confluence publish ./docs --space ENG --parent 123456789 --no-kroki -p myprofile
 ```
 
 Given this directory:
@@ -591,6 +595,7 @@ confluence_properties:
 | `confluence_url` | Auto | Set by `orbit confluence publish` — direct link to the page |
 | `confluence_labels` | No | Labels applied to the Confluence page for search and filtering |
 | `confluence_properties` | No | Confluence page properties macro — renders as a metadata table at the top |
+| `confluence_disable_kroki` | No | When `true`, skip Kroki rendering for this file; leave diagram code blocks as preformatted text (default: `false`) |
 
 > **Tip:** Do not manually set `confluence_page_id` or `confluence_url`. Let `orbit confluence publish` manage them automatically.
 
@@ -744,6 +749,8 @@ These elements convert cleanly to Confluence storage format:
      |                    |
      +--- codify <-------+
    ```
+
+   Diagram code blocks (` ```mermaid `, ` ```plantuml `, etc.) are otherwise rendered as images via Kroki. To keep them as preformatted code instead, pass `--no-kroki` to `orbit confluence publish` (whole run) or set `confluence_disable_kroki: true` in a file's frontmatter (that file only).
 
 5. **Cross-link with relative paths** — `[PIV Loops](../workflow/piv-loops.md)` works both locally and in Confluence (resolved during publish).
 

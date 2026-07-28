@@ -2,6 +2,8 @@
 
 Orbit renders fenced diagram code blocks as PNG images via [kroki.io](https://kroki.io). Mermaid diagrams are auto-sanitized before rendering, but some issues require manual fixes.
 
+To skip rendering entirely and keep diagram code blocks as preformatted (ASCII) text, pass `--no-kroki` to `orbit confluence publish` (whole run) or set `confluence_disable_kroki: true` in a file's frontmatter (that file only). None of the compatibility concerns below apply when rendering is disabled.
+
 ## Auto-Fixed Issues (Mermaid)
 
 These are automatically corrected by orbit during publishing:

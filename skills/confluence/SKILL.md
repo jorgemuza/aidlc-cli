@@ -168,6 +168,8 @@ graph LR
 
 This renders as a PNG image (max 600px wide, 800px tall — auto-scaled) with a clickable link to the full-resolution image. Regular code blocks (`python`, `go`, `bash`, etc.) are unaffected. If Kroki rejects a diagram (syntax error), it falls back to a syntax-highlighted code block.
 
+**Disabling Kroki rendering.** To keep diagram code blocks as preformatted (ASCII) text instead of rendering them as images, pass `--no-kroki` to `publish` (applies to the whole run) or set `confluence_disable_kroki: true` in a file's frontmatter (that file only). The effective setting is the CLI flag OR the per-file frontmatter, so a single file can opt out even when the run does not. This also applies to diagrams nested inside `<details>` blocks, and it avoids the network entirely (no call to kroki.io).
+
 **Mermaid diagrams are auto-sanitized** before rendering to fix common Kroki compatibility issues:
 - `<br/>` tags stripped (replaced with `. `)
 - Parenthesized suffixes in participant aliases converted: `Worker (queue)` → `Worker - queue`
