@@ -419,6 +419,35 @@ orbit confluence publish ./docs --space ENG --parent 123456789 --dry-run -p mypr
 orbit confluence publish ./docs --space ENG --parent 123456789 --no-kroki -p myprofile
 ```
 
+### Disabling Diagram Rendering
+
+By default, fenced diagram blocks (` ```mermaid `, ` ```plantuml `, etc.) are rendered as images via Kroki. To keep them as plain preformatted (ASCII) text instead, disable Kroki one of two ways.
+
+**Whole run - `--no-kroki` flag:**
+
+```bash
+orbit confluence publish ./docs --space ENG --parent 123456789 --no-kroki -p myprofile
+```
+
+**Single file - `confluence_disable_kroki` frontmatter:**
+
+````markdown
+---
+title: Architecture Overview
+confluence_disable_kroki: true
+---
+
+# Architecture
+
+```mermaid
+graph TD; A-->B;
+```
+````
+
+That `mermaid` block publishes as a code block rather than a Kroki image.
+
+The effective setting per file is the flag **OR** the frontmatter, so `--no-kroki` disables rendering everywhere while `confluence_disable_kroki: true` lets a single file opt out even when the run does not pass the flag. When disabled, orbit makes no network call to kroki.io (including diagrams nested inside `<details>` blocks).
+
 Given this directory:
 
 ```
