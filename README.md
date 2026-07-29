@@ -4,7 +4,7 @@ A unified CLI for managing connections to development lifecycle services.
 
 Supports **Jira**, **Confluence**, **GitLab**, **GitHub**, **Bitbucket**, **GoCD**, and **Azure DevOps** (cloud and self-hosted). Includes **build provenance attestation** verification via Sigstore and **AI token usage tracking** (tkm) with cost analysis per model. Pairs with [RTK](https://github.com/rtk-ai/rtk) for command output compression (60-90% token savings). Organize connections into profiles to switch between projects seamlessly.
 
-Secrets can be stored as [1Password](https://1password.com/) references (`op://vault/item/field`) and are resolved at runtime using the 1Password CLI.
+Secrets can be stored as [1Password](https://1password.com/) references (`op://vault/item/field`) or [Infisical](https://infisical.com/) references (`infisical://<env>/<path>/<KEY>`) and are resolved at runtime. See [Secrets](docs/secrets.md).
 
 ## Install
 
@@ -132,7 +132,7 @@ orbit service list                                  # List services in active pr
 orbit service ping                                  # Test all connections
 orbit service ping jira-cloud                       # Test specific service
 
-orbit auth                                          # Pre-resolve 1Password secrets
+orbit auth                                          # Pre-resolve and cache secrets
 orbit auth clear                                    # Clear cached secrets
 
 orbit version                                       # Print version info

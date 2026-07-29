@@ -15,7 +15,7 @@ Manage Jira issues, epics, sprints, boards, projects, releases, custom fields, s
    - **Windows (Scoop):** `scoop bucket add jorgemuza https://github.com/jorgemuza/scoop-bucket && scoop install orbit`
 2. A profile with a `jira-cloud` or `jira-onprem` service configured in `~/.config/orbit/config.yaml`
 3. Valid credentials — API token for Cloud (basic auth with email + token), PAT for Server
-4. Credentials can be stored in 1Password with `op://` prefix for automatic resolution
+4. Credentials can be stored as 1Password (`op://`) or Infisical (`infisical://`) references for automatic resolution
 
 ## Quick Reference
 
@@ -446,4 +446,4 @@ orbit -p myprofile jira issue list --jql '"Parent" = PROJ-40' -o json
 - **Field management** — `field create`, `field context-list`, `field option-list`, and `field option-add` are Cloud-only features.
 - **Screen management** — Adding fields to screens makes them appear on issue create/edit forms. Use `tab-create` to group related fields into a dedicated tab.
 - **Epic type cannot use `--parent` flag** — Jira rejects it because Epic is not a sub-task type. Use the `--field "customfield_27521=KEY"` (Parent Link) instead.
-- **1Password integration** — Credentials in config can use `op://vault/item/field` and are resolved at runtime. Run `orbit auth` once to resolve and cache all secrets for 8 hours (single biometric prompt). Use `orbit auth clear` to wipe the cache. Without `orbit auth`, secrets are still resolved on each command but may trigger repeated biometric prompts.
+- **Secret references** - Credentials in config can use 1Password (`op://vault/item/field`) or Infisical (`infisical://<env>/<path>/<KEY>`) references, resolved at runtime. Run `orbit auth` once to resolve and cache all secrets (a single biometric prompt for 1Password). Use `orbit auth clear` to wipe the cache. See [Secrets](../../docs/secrets.md). Without `orbit auth`, secrets are still resolved on each command but may trigger repeated biometric prompts.

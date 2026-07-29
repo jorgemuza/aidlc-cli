@@ -14,7 +14,7 @@ Comprehensive GoCD management through the `orbit` CLI. Covers pipelines, pipelin
    - **macOS/Linux (script):** `curl -sSfL https://raw.githubusercontent.com/jorgemuza/orbit/main/install.sh | sh`
    - **Windows (Scoop):** `scoop bucket add jorgemuza https://github.com/jorgemuza/scoop-bucket && scoop install orbit`
 2. A profile with a `gocd` service configured in `~/.config/orbit/config.yaml`
-3. Valid credentials (API token or basic auth) — can be stored in 1Password with `op://` prefix
+3. Valid credentials (API token or basic auth) - can be stored as 1Password (`op://`) or Infisical (`infisical://`) references
 4. `base_url` is required (GoCD is always self-hosted)
 
 ## Quick Reference

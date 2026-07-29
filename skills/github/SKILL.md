@@ -14,7 +14,7 @@ Manage GitHub repositories, pull requests, issues, releases, branches, tags, com
    - **macOS/Linux (script):** `curl -sSfL https://raw.githubusercontent.com/jorgemuza/orbit/main/install.sh | sh`
    - **Windows (Scoop):** `scoop bucket add jorgemuza https://github.com/jorgemuza/scoop-bucket && scoop install orbit`
 2. A profile with a `github` service configured in `~/.config/orbit/config.yaml`
-3. Valid credentials (Personal Access Token) — can be stored in 1Password with `op://` prefix
+3. Valid credentials (Personal Access Token) - can be stored as 1Password (`op://`) or Infisical (`infisical://`) references
 
 ## Quick Reference
 
@@ -261,5 +261,5 @@ orbit -p myprofile gh pr comment octocat/hello-world 42 --body "Approved, looks 
 - **Profile required** — Always pass `-p <profile>` to select the GitHub connection. The profile must have a service of type `github` configured.
 - **Service flag** — If a profile has multiple GitHub services, use `--service <name>` to disambiguate.
 - **Cloud vs Enterprise** — Works with both. For GitHub.com the base_url defaults to `https://api.github.com`. For GitHub Enterprise, set the base_url in your profile config.
-- **1Password integration** — Auth tokens in config can use `op://vault/item/field` and are resolved at runtime. Run `orbit auth` once to resolve and cache all secrets for 8 hours (single biometric prompt). Use `orbit auth clear` to wipe the cache.
+- **Secret references** - Credentials in config can use 1Password (`op://vault/item/field`) or Infisical (`infisical://<env>/<path>/<KEY>`) references, resolved at runtime. Run `orbit auth` once to resolve and cache all secrets (a single biometric prompt for 1Password). Use `orbit auth clear` to wipe the cache. See [Secrets](../../docs/secrets.md).
 - **Pagination** — Most list commands default to 20-50 results. Use `--limit N` to adjust.

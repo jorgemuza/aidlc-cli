@@ -14,7 +14,7 @@ Manage Confluence pages, publish markdown documentation, and control page layout
    - **macOS/Linux (script):** `curl -sSfL https://raw.githubusercontent.com/jorgemuza/orbit/main/install.sh | sh`
    - **Windows (Scoop):** `scoop bucket add jorgemuza https://github.com/jorgemuza/scoop-bucket && scoop install orbit`
 2. A profile with a `confluence-cloud` or `confluence-server` service configured in `~/.config/orbit/config.yaml`
-3. Valid credentials (API token for Cloud, PAT for Server) — can be stored in 1Password with `op://` prefix
+3. Valid credentials (API token for Cloud, PAT for Server) - can be stored as 1Password (`op://`) or Infisical (`infisical://`) references
 4. For Cloud: auth type is `basic` with email as username and API token as password
 
 ## Quick Reference
@@ -426,5 +426,5 @@ The converter handles the following transformations:
 - **Wide width by default** -- All pages created via `orbit` are automatically set to full-width layout. Use `set-width --width fixed` to revert.
 - **Cloud vs Server** -- Use service type `confluence-cloud` for Atlassian Cloud (requires `/wiki/` prefix in API paths, handled automatically). Use `confluence-server` for Data Center.
 - **Auth for Cloud** -- Basic auth with your email as username and an API token (not your password) as the password field.
-- **1Password integration** -- Credentials in config can use `op://vault/item/field` and are resolved at runtime. Run `orbit auth` once to resolve and cache all secrets for 8 hours (single biometric prompt). Use `orbit auth clear` to wipe the cache.
+- **Secret references** - Credentials in config can use 1Password (`op://vault/item/field`) or Infisical (`infisical://<env>/<path>/<KEY>`) references, resolved at runtime. Run `orbit auth` once to resolve and cache all secrets (a single biometric prompt for 1Password). Use `orbit auth clear` to wipe the cache. See [Secrets](../../docs/secrets.md).
 - **Dry run before publish** -- Always use `--dry-run` first when publishing a directory to preview the page hierarchy before making API calls.

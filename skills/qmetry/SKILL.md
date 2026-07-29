@@ -5,7 +5,7 @@ description: "Manage QMetry test cases, test cycles, and test executions using t
 
 # QMetry with orbit CLI
 
-Manage QMetry test cases, test cycles, folders, and projects through the `orbit` CLI. Works with QMetry Cloud via REST API with multi-profile support and 1Password secret resolution.
+Manage QMetry test cases, test cycles, folders, and projects through the `orbit` CLI. Works with QMetry Cloud via REST API with multi-profile support and secret resolution (1Password and Infisical).
 
 ## Prerequisites
 

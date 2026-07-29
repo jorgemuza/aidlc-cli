@@ -14,7 +14,7 @@ Manage GitLab projects, merge requests, pipelines, pipeline schedules, issues, b
    - **macOS/Linux (script):** `curl -sSfL https://raw.githubusercontent.com/jorgemuza/orbit/main/install.sh | sh`
    - **Windows (Scoop):** `scoop bucket add jorgemuza https://github.com/jorgemuza/scoop-bucket && scoop install orbit`
 2. A profile with a `gitlab` service configured in `~/.config/orbit/config.yaml`
-3. Valid credentials (Personal Access Token or Bearer token) — can be stored in 1Password with `op://` prefix
+3. Valid credentials (Personal Access Token or Bearer token) - can be stored as 1Password (`op://`) or Infisical (`infisical://`) references
 
 ## Quick Reference
 
@@ -269,6 +269,6 @@ orbit -p myprofile gl mr comment 595 42 --body "Approved, looks good"
 - **Profile required** — Always pass `-p <profile>` to select the GitLab connection. The profile must have a service of type `gitlab` configured.
 - **Service flag** — If a profile has multiple GitLab services, use `--service <name>` to disambiguate.
 - **Cloud vs Self-hosted** — Works with both. The base URL in your profile config determines the GitLab instance.
-- **1Password integration** — Auth tokens in config can use `op://vault/item/field` and are resolved at runtime. Run `orbit auth` once to resolve and cache all secrets for 8 hours (single biometric prompt). Use `orbit auth clear` to wipe the cache.
+- **Secret references** - Credentials in config can use 1Password (`op://vault/item/field`) or Infisical (`infisical://<env>/<path>/<KEY>`) references, resolved at runtime. Run `orbit auth` once to resolve and cache all secrets (a single biometric prompt for 1Password). Use `orbit auth clear` to wipe the cache. See [Secrets](../../docs/secrets.md).
 - **MR = PR** — If a user says "pull request" or "PR" in a GitLab context, they mean merge request.
 - **Pagination** — Most list commands default to 20-50 results. Use `--limit N` to adjust.

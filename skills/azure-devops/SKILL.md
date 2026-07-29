@@ -156,4 +156,4 @@ Key differences from Jira JQL:
 - **JSON Patch**: Create/update use `application/json-patch+json` format internally — the CLI handles this; just pass `--field Key=Value`.
 - **default_project**: Set in `options.default_project` to avoid `--project` on every command.
 - **Proxy bypass**: If your profile has a proxy for VPN services but Azure DevOps is on the public internet, set `proxy: none` on the service to bypass.
-- **1Password integration**: PAT in config can use `op://vault/item/field` and is resolved at runtime via `orbit auth`.
+- **Secret references**: PAT in config can use 1Password (`op://vault/item/field`) or Infisical (`infisical://<env>/<path>/<KEY>`) references, resolved at runtime via `orbit auth`.

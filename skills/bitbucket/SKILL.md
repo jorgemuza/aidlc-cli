@@ -14,7 +14,7 @@ Manage Bitbucket repositories, pull requests, branches, tags, commits, projects,
    - **macOS/Linux (script):** `curl -sSfL https://raw.githubusercontent.com/jorgemuza/orbit/main/install.sh | sh`
    - **Windows (Scoop):** `scoop bucket add jorgemuza https://github.com/jorgemuza/scoop-bucket && scoop install orbit`
 2. A profile with a `bitbucket` service configured in `~/.config/orbit/config.yaml`
-3. Valid credentials (Personal Access Token or Bearer token for Server; app password for Cloud) — can be stored in 1Password with `op://` prefix
+3. Valid credentials (Personal Access Token or Bearer token for Server; app password for Cloud) - can be stored as 1Password (`op://`) or Infisical (`infisical://`) references
 
 ## Quick Reference
 
@@ -269,7 +269,7 @@ orbit -p myprofile bb repo list L3SUP
 - **Profile required** — Always pass `-p <profile>` to select the Bitbucket connection. The profile must have a service of type `bitbucket` configured.
 - **Service flag** — If a profile has multiple Bitbucket services, use `--service <name>` to disambiguate.
 - **Server vs Cloud** — The service variant (`server` or `cloud`) in config determines the API prefix. Server uses `/rest/api/latest/`, Cloud uses `/2.0/`.
-- **1Password integration** — Auth tokens in config can use `op://vault/item/field` and are resolved at runtime. Run `orbit auth` once to resolve and cache all secrets for 8 hours (single biometric prompt). Use `orbit auth clear` to wipe the cache.
+- **Secret references** - Credentials in config can use 1Password (`op://vault/item/field`) or Infisical (`infisical://<env>/<path>/<KEY>`) references, resolved at runtime. Run `orbit auth` once to resolve and cache all secrets (a single biometric prompt for 1Password). Use `orbit auth clear` to wipe the cache. See [Secrets](../../docs/secrets.md).
 - **PR states are uppercase** — Use `OPEN`, `MERGED`, `DECLINED`, or `ALL` (case-insensitive input is accepted).
 - **Pagination** — Most list commands default to 25-50 results. Use `--limit N` to adjust.
 - **URL parsing** — When a user provides a Bitbucket Server URL like `https://host/projects/KEY/repos/SLUG/...`, extract the project key and repo slug from the URL path to use with orbit commands.
