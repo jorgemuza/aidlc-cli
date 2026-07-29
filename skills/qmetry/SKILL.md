@@ -14,7 +14,7 @@ Manage QMetry test cases, test cycles, folders, and projects through the `orbit`
    - **macOS/Linux (script):** `curl -sSfL https://raw.githubusercontent.com/jorgemuza/orbit/main/install.sh | sh`
    - **Windows (Scoop):** `scoop bucket add jorgemuza https://github.com/jorgemuza/scoop-bucket && scoop install orbit`
 2. A profile with a `qmetry` service configured in `~/.config/orbit/config.yaml`
-3. QMetry API key — generated from QMetry Settings → API Keys
+3. QMetry API key - generated from QMetry Settings → API Keys; can be stored as 1Password (`op://`) or Infisical (`infisical://<env>/<path>/<KEY>`) references
 
 ## Configuration
 
