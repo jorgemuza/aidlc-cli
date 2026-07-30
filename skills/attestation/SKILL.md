@@ -34,8 +34,20 @@ Verify that an artifact matches its attestation bundle, confirming build provena
 # Verify a local binary against a bundle
 orbit attestation verify ./my-binary --bundle attestation.jsonl
 
-# Verify with owner and signer identity checks
-orbit attest verify ./artifact --bundle bundle.json --owner my-org --signer-identity "github.com/my-org/my-repo"
+# Verify with owner, repo, and signer identity checks.
+# --owner and --repo must equal the owner and repository the provenance source
+# URI names, compared case-insensitively; using either also requires the source
+# to be hosted on --source-host (default github.com). --signer-identity must be
+# an anchored prefix of the builder ID (matched from the start, ending on a '/',
+# an '@', or end of string); its scheme://host/owner/repo head folds case, the
+# workflow path and git ref after it do not. Nested namespaces work too:
+# --owner mygroup/subgroup --repo myproject.
+orbit attest verify ./artifact --bundle bundle.json --owner my-org --repo my-repo \
+  --signer-identity "https://github.com/my-org/my-repo"
+
+# Same, against a self-hosted forge instead of github.com
+orbit attest verify ./artifact --bundle bundle.json --source-host git.example.com \
+  --repo my-org/my-repo
 
 # Verify a pre-computed digest
 orbit attestation verify abc123def456... --bundle att.json --digest-algorithm sha256
@@ -98,7 +110,7 @@ orbit attestation inspect bundle.json -o json | jq '.signer'
 orbit attest verify ./artifact --bundle bundle.json \
   --owner my-org \
   --repo my-org/my-repo \
-  --signer-identity "github.com/my-org/my-repo/.github/workflows/release.yml"
+  --signer-identity "https://github.com/my-org/my-repo/.github/workflows/release.yml"
 ```
 
 ## Important Notes

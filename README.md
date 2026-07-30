@@ -253,7 +253,7 @@ Verify build provenance attestations using Sigstore bundles with in-toto format 
 
 ```bash
 orbit attestation verify ./my-binary --bundle attestation.jsonl
-orbit attestation verify ./artifact --bundle bundle.json --owner my-org --signer-identity "github.com/my-org/repo"
+orbit attestation verify ./artifact --bundle bundle.json --owner my-org --repo my-repo --signer-identity "https://github.com/my-org/my-repo"
 orbit attestation inspect attestation.jsonl
 orbit attestation download sha256:abc123... --repo owner/repo
 ```
