@@ -448,6 +448,21 @@ That `mermaid` block publishes as a code block rather than a Kroki image.
 
 The effective setting per file is the flag **OR** the frontmatter, so `--no-kroki` disables rendering everywhere while `confluence_disable_kroki: true` lets a single file opt out even when the run does not pass the flag. When disabled, orbit makes no network call to kroki.io (including diagrams nested inside `<details>` blocks).
 
+#### When Kroki is slow or down
+
+Diagrams are rendered four at a time, and each one gets 30 seconds covering every retry and the backoff between them. A page of eight diagrams against an unresponsive Kroki therefore costs about two 30s windows rather than eight. Rendering order does not affect the published page: the markup is emitted in document order whatever order the renders finish in.
+
+If kroki.io does not answer within a diagram's budget, the publish stops and names the file and diagram that timed out rather than hanging:
+
+```
+Error: converting docs/architecture.md: kroki did not answer within 30s for the
+mermaid diagram starting "graph TD;A-->B;": rerun with --no-kroki to publish
+diagrams as code blocks (or set confluence_disable_kroki: true in this file's
+frontmatter), or raise the budget with --timeout
+```
+
+The global `--timeout` flag overrides the 30s budget, so `--timeout 2m` allows a slow link and `--timeout 5s` fails faster. `Ctrl-C` stops a publish immediately, including mid-diagram and during a retry backoff; press it again to force quit.
+
 Given this directory:
 
 ```

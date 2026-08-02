@@ -205,6 +205,7 @@ orbit gh pr list octocat/hello-world
 orbit gh pr create octocat/hello-world --head feature/x --base main --title "Add feature"
 orbit gh run list octocat/hello-world
 orbit gh run watch octocat/hello-world 12345
+orbit gh run view octocat/hello-world 12345 --log-failed
 orbit gh issue list octocat/hello-world --labels bug
 orbit gh secret set octocat/hello-world MY_SECRET --value "s3cret"
 orbit gh release latest octocat/hello-world

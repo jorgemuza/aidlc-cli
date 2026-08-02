@@ -225,10 +225,53 @@ Flags:
 - `--limit` — max results (default: 20)
 
 ### `github run view [owner/repo] [run-id]`
-View a workflow run.
+View a workflow run, its jobs and their steps.
 ```
 orbit github run view octocat/hello-world 12345
+orbit github run view octocat/hello-world 12345 --log-failed
+orbit github run view octocat/hello-world 12345 --job 67890 --log
 ```
+Flags:
+- `--job` — view a single job of the run by job ID
+- `--log` — print full job logs (with `--job`, that job only)
+- `--log-failed` — print the log output of the failed steps only
+- `--exit-status` — exit non-zero if the run did not succeed
+- `--attempt` — view a specific run attempt
+
+`--log-failed` narrows each failed job's log to the failing step's output: step headers
+matched against the step order and bounded by the step's start/end times, then the
+`##[group]` title, then the log's `##[error]` markers - each chunk says which of those
+located it in `matched_by`, and `step order (unconfirmed)` means nothing corroborated the
+match, so that slice may not be the failing one. A step that produced no output says so,
+and a log that does not cover a step reports itself truncated. If a log cannot be narrowed
+down, the full job log is printed with the failed step names called out above it.
+
+Log fetching follows GitHub's redirect to a signed storage URL. orbit refuses to follow
+it when a proxy is configured for the service, an environment proxy applies to the
+target, or `tls_skip_verify` is set, because it cannot then verify where the request
+would go; the error names the reason. Users behind a corporate proxy cannot fetch logs
+today. Other `run` commands work normally in those setups. Full list of caveats:
+[docs/github.md](../../../docs/github.md#log-fetching-caveats).
+
+### `github run jobs [owner/repo] [run-id]`
+List the jobs of a workflow run (ID, status, conclusion, elapsed, name). Alias: `job`.
+```
+orbit github run jobs octocat/hello-world 12345
+```
+Flags:
+- `--attempt` — list jobs of a specific run attempt
+
+### `github run log [owner/repo] [run-id]`
+Print workflow run logs as plain text. Without flags, every job's log is printed under
+its own header. Alias: `logs`.
+```
+orbit github run log octocat/hello-world 12345 --failed
+orbit github run log octocat/hello-world 12345 --job 67890
+```
+Flags:
+- `--job` — print the log of a single job by job ID
+- `--failed` — print the log output of the failed steps only
+- `--attempt` — use a specific run attempt
 
 ### `github run watch [owner/repo] [run-id]`
 Watch a workflow run until it completes. Polls for status updates and displays job/step progress in real-time. If no run-id is provided, watches the most recent in-progress run.
@@ -328,6 +371,36 @@ View a user profile.
 ```
 orbit github user view octocat
 ```
+
+## Raw API
+
+### `github api [endpoint]`
+Make an authenticated request to any GitHub REST API endpoint. The endpoint is a path relative to the configured base URL, with or without a leading slash, so it also works against GitHub Enterprise. The response body is pretty-printed JSON (`-o yaml` renders YAML); a non-2xx response prints the API's error body and exits non-zero.
+```
+orbit github api /repos/cli/cli
+orbit github api repos/cli/cli/issues --paginate -F per_page=100
+orbit github api /rate_limit -i
+orbit github api /repos/octocat/hello-world/issues -f title="Bug" -F body=@report.md
+orbit github api /repos/octocat/hello-world/issues -f title="Bug" -F 'labels[]=bug' -F 'labels[]=p1'
+orbit github api /repos/octocat/hello-world/issues/1 -X PATCH -F state=closed
+orbit github api /repos/octocat/hello-world/issues --input payload.json
+orbit github api /repos/cli/cli/pulls/1 -H "Accept: application/vnd.github.diff"
+```
+Flags:
+- `-X, --method` - HTTP method (default: GET; POST when fields or `--input` are supplied)
+- `-f, --raw-field` - `key=value` parameter, always sent as a string
+- `-F, --field` - `key=value` parameter with type inference: `42` → number, `true`/`false` → boolean, `null` → JSON null, `@file` → the file's contents (`@-` reads stdin)
+- `-H, --header` - extra request header in `name:value` format (repeatable)
+- `--input` - read the raw request body from a file, or `-` for stdin (mutually exclusive with the field flags)
+- `--paginate` - follow `Link rel="next"` and concatenate the JSON array of every page (GET only)
+- `-i, --include` - print the response status line and headers before the body
+
+Notes:
+- Both field flags accept `key[]=value`: repeat it to build a JSON array, elements are typed by the same rules as scalars, one occurrence is still an array, and a bare `key[]` sends an empty array. Mixing `key=` and `key[]=` for one name is an error. On `GET`/`HEAD` an array repeats as `key[]=a&key[]=b`.
+- On `GET`/`HEAD` the fields become query parameters instead of a request body.
+- `--paginate` is read-only and fetches every page (stopping at 1000 pages, or earlier if the server's `Link` headers loop, and saying so); endpoints that return an object rather than an array are reported instead of being aggregated.
+- Requests stay on the host the connection is configured for: a full URL, pagination link, or redirect pointing elsewhere is refused rather than followed with your token attached.
+- Any non-2xx status, including `304 Not Modified` and unfollowed redirects, exits non-zero.
 
 ## Global Flags
 
