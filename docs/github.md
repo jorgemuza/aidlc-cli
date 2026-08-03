@@ -861,6 +861,54 @@ expires job logs. When the log does not cover a failed step, that chunk says
 `truncated: true` in JSON, instead of appearing empty or borrowing a neighbouring step's
 output.
 
+**A job with no log is skipped over, not fatal.** Not every job has a log: a skipped job
+never ran, so GitHub recorded nothing for it, and the same goes for one cancelled before
+it started or one whose log has been expired out. GitHub does not say so up front - the
+log endpoint redirects exactly as it does for a job that has a log, and the storage host
+answers `404` at the end of the chain. That job is listed like any other and marked as
+having no log, and the rest of the run's logs are printed as usual:
+
+```
+==> Job: replay-tape-gate (id 91541847589)
+    (no log - this job was skipped, so GitHub never recorded one)
+```
+
+In JSON and YAML the entry carries `no_log: true`, which is what separates it from a job
+whose log is present and empty - both are `"log": ""`. A run where *no* job has a log
+exits `0`: a workflow whose jobs were all skipped is ordinary GitHub behaviour, and the
+per-job entries already say so, so there is nothing for a non-zero exit to add.
+
+**Only the storage host's `404` counts as "no log", and only when it is not blamed on
+something else.** All three of these must hold:
+
+1. the status is `404`;
+2. it came from a host other than the API - a different hostname or port. The comparison
+   folds everything that does not change which machine answers: case, a trailing root dot,
+   the many spellings of one IP address, a zero-padded port, and a port the scheme leaves
+   implicit. The scheme is not part of it, so two URLs differing only in scheme are the
+   same answering host - a scheme says how you reach a machine, not which one answers;
+3. that host named no reason for it, or named only a missing blob
+   (`x-ms-error-code: BlobNotFound`).
+
+The host is what carries the meaning, and "a redirect was followed" is *not* the same
+test: a `Location` may be relative and resolve back onto the API's own host, and the
+checks on the way vet how a hop is made, not where it ends up. A `404` from the API -
+whether direct or at the end of a redirect that stayed on its host - means a deleted run,
+a job ID that does not exist, or a repository the token's access to was revoked between
+listing the jobs and fetching this one. Those stay errors and still fail the command,
+because reporting them as "no log" would hide a real failure behind a normal result.
+
+The `x-ms-error-code` header is used when present but never required, and every value of
+it is read rather than just the first. `ContainerNotFound` or an authorization failure is
+a storage problem, not a job that never wrote a log, so it stays fatal; when the header is
+absent - as it will be on GitHub Enterprise, or if the storage backend ever changes - the
+status and the host decide, which is all that is specified anyway.
+
+Everything else stays an error on either hop: an expired token, a rate limit, a signature
+that has run out, a storage host having a bad day. None of them say anything about whether
+the log exists. Use `run view --exit-status` when you want the exit code to follow the
+run's own conclusion.
+
 **Not verified.** The proxy refusal policy has been exercised against a local `socks5h`
 proxy and stubbed resolvers only - not against a real GitHub Enterprise install behind a
 corporate proxy with split-horizon DNS and certificate verification enabled. Job
