@@ -92,6 +92,31 @@ Macros use the `ac:structured-macro` element with Atlassian-specific namespaces.
 </ac:structured-macro>
 ```
 
+### Markdown (Mermaid Diagrams)
+
+Emitted only under the `markdown-macro` diagram strategy (`--diagrams markdown-macro`,
+`confluence_diagrams: markdown-macro`, or `options.diagrams` on the service). Requires an app
+providing the `markdown` macro to be installed on the Confluence.
+
+```xml
+<ac:structured-macro ac:name="markdown">
+  <ac:plain-text-body><![CDATA[```mermaid
+graph TD;A-->B;
+```]]></ac:plain-text-body>
+</ac:structured-macro>
+```
+
+The fenced block is *content inside the CDATA*, not a child element — the same plain-text-body
+shape as the code macro above. Notes:
+
+- `ac:macro-id` is **not** emitted. Confluence assigns one per macro on save; sending our own
+  would duplicate the server's, or repeat a single id across a whole run.
+- Only mermaid is wrapped this way. Other diagram languages render inside the macro as
+  syntax-highlighted source rather than diagrams, so under this strategy they are left as code
+  blocks — never sent to Kroki.
+- A source containing `]]>` is split across two CDATA sections; a source containing a fence gets
+  a longer fence. Both are reversed on read.
+
 ### Info Panel (Blockquote)
 
 ```xml

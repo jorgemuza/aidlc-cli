@@ -168,7 +168,17 @@ graph LR
 
 This renders as a PNG image (max 600px wide, 800px tall — auto-scaled) with a clickable link to the full-resolution image. Regular code blocks (`python`, `go`, `bash`, etc.) are unaffected. If Kroki rejects a diagram (syntax error), it falls back to a syntax-highlighted code block.
 
-**Disabling Kroki rendering.** To keep diagram code blocks as preformatted (ASCII) text instead of rendering them as images, pass `--no-kroki` to `publish` (applies to the whole run) or set `confluence_disable_kroki: true` in a file's frontmatter (that file only). The effective setting is the CLI flag OR the per-file frontmatter, so a single file can opt out even when the run does not. This also applies to diagrams nested inside `<details>` blocks, and it avoids the network entirely (no call to kroki.io).
+**Choosing how diagrams render.** `--diagrams` selects one of three strategies for the whole run; `confluence_diagrams` in a file's frontmatter selects one for that file; `options.diagrams` on the Confluence service selects one for the instance. It is a single choice, and the most specific place wins: invocation, then file, then instance, then the default.
+
+| Strategy | What it does |
+|----------|--------------|
+| `kroki` | Render every diagram to a kroki.io PNG. The default. |
+| `markdown-macro` | Wrap mermaid in the Confluence `markdown` macro, which an app renders in the reader's browser — the diagram stays live, vector and editable in Confluence. **Never contacts kroki.io:** other diagram languages are left as code blocks rather than sent out, since on a live instance only `.language-mermaid` gets the app's `mermaid.init` and sending the rest to a third party would defeat the reason this strategy is chosen. Ask for `kroki` per file or per run if you want them rendered. |
+| `code-block` | Leave every diagram as preformatted (ASCII) text, calling nothing. |
+
+`markdown-macro` is never the default: the macro comes from an app that is not installed on every Confluence, and a page carrying a macro the instance lacks renders an error where the diagram should be. Set `options.diagrams: markdown-macro` on the service when the instance does have it, since that is a property of the Confluence rather than of any one publish. Under this strategy the diagram source is passed through untouched — the sanitizing below applies to the Kroki path only.
+
+`--no-kroki` and `confluence_disable_kroki: true` still work and mean `code-block`. Two names for the option in the same place disagreeing — `--no-kroki` with `--diagrams`, or `confluence_disable_kroki` with `confluence_diagrams` — is an error rather than a silent winner, as is an unrecognised strategy name. One layer overriding another is not a conflict; that is what the layers are for. All of this applies to diagrams nested inside `<details>` blocks too.
 
 **Mermaid diagrams are auto-sanitized** before rendering to fix common Kroki compatibility issues:
 - `<br/>` tags stripped (replaced with `. `)

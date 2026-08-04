@@ -192,6 +192,7 @@ orbit confluence create [flags]
 | `--parent` | No | Parent page ID to nest the new page under |
 | `-b, --body` | No | Page body content as a string (Confluence storage format / XHTML) |
 | `-f, --file` | No | Path to a markdown file to convert and upload as the page body |
+| `--diagrams` | No | How to render diagram code blocks in `--file`: `kroki` (default), `markdown-macro`, or `code-block` |
 
 ### Examples
 
@@ -229,6 +230,7 @@ orbit confluence update [page-id] [flags]
 | `--title` | New title for the page |
 | `-b, --body` | New body content as a string |
 | `-f, --file` | Path to a markdown file to convert and use as the new body |
+| `--diagrams` | How to render diagram code blocks in `--file`: `kroki` (default), `markdown-macro`, or `code-block` |
 
 ### Examples
 
@@ -381,7 +383,8 @@ orbit confluence publish [directory] [flags]
 | `--space` | Yes | Confluence space key |
 | `--parent` | Yes | Parent page ID under which the pages will be published |
 | `--dry-run` | No | Preview what would be published without making any changes |
-| `--no-kroki` | No | Disable Kroki diagram rendering for the whole run; leave diagram code blocks as preformatted text |
+| `--diagrams` | No | How to render diagram code blocks for the whole run: `kroki` (default), `markdown-macro`, or `code-block` |
+| `--no-kroki` | No | Shorthand for `--diagrams code-block` |
 
 ### Directory Structure Rules
 
@@ -415,26 +418,66 @@ orbit confluence publish ./docs --space ENG --parent 123456789 -p myprofile
 # Preview what would be published (no changes made)
 orbit confluence publish ./docs --space ENG --parent 123456789 --dry-run -p myprofile
 
-# Publish without rendering diagrams via Kroki (leave them as code blocks)
-orbit confluence publish ./docs --space ENG --parent 123456789 --no-kroki -p myprofile
+# Publish without rendering diagrams at all (leave them as code blocks)
+orbit confluence publish ./docs --space ENG --parent 123456789 --diagrams code-block -p myprofile
+
+# Render mermaid with the Confluence markdown macro instead of Kroki
+orbit confluence publish ./docs --space ENG --parent 123456789 --diagrams markdown-macro -p myprofile
 ```
 
-### Disabling Diagram Rendering
+### Diagram Rendering
 
-By default, fenced diagram blocks (` ```mermaid `, ` ```plantuml `, etc.) are rendered as images via Kroki. To keep them as plain preformatted (ASCII) text instead, disable Kroki one of two ways.
+By default, fenced diagram blocks (` ```mermaid `, ` ```plantuml `, etc.) are rendered as images via Kroki. `--diagrams` picks a different strategy. It is one choice with one value, not a set of switches — a diagram is rendered exactly one way, so there is no combination that can contradict itself.
 
-**Whole run - `--no-kroki` flag:**
+| Strategy | What it does | What it needs |
+|----------|--------------|---------------|
+| `kroki` | Renders every diagram type to a PNG served by kroki.io and links the image. The default. | kroki.io reachable at publish time |
+| `markdown-macro` | Wraps mermaid diagrams in the Confluence `markdown` macro. An app turns it into a `language-mermaid` code block plus a `mermaid.init` call, so the reader's browser draws the diagram: it stays live, vector and editable in Confluence. **Never contacts kroki.io** — other diagram languages are left as code blocks. | An app providing the `markdown` macro, installed on the Confluence |
+| `code-block` | Leaves every diagram as preformatted (ASCII) text. Makes no network call at all. | Nothing |
+
+`markdown-macro` is never the default. The macro comes from an app that is not installed on every Confluence, and a page carrying a macro the instance does not have renders an error where the diagram should be.
+
+#### Choosing a strategy
+
+The strategy can be set in three places. The most specific one wins:
+
+1. **The invocation** — `--diagrams <strategy>` on `publish`, `create` or `update`.
+2. **The file** — `confluence_diagrams: <strategy>` in a file's YAML frontmatter.
+3. **The instance** — `options.diagrams: <strategy>` on the Confluence service in your profile.
+
+The instance sits last on purpose: whether the markdown macro's app is installed is a property of the Confluence rather than of any one publish, so configuring it there means you say it once and every page published to that instance gets it — while a specific run or a specific file can still override it.
+
+One layer overriding another is not a conflict; it is what the layers are for. What *is* refused is two names for the option **in the same place** disagreeing — `--no-kroki` against `--diagrams`, or `confluence_disable_kroki` against `confluence_diagrams`. Those stop the run with an error naming the file, rather than warning and carrying on with a value you did not ask for. An unrecognised strategy name is refused the same way, wherever it appears: a typo in a setting that decides whether diagram source leaves your network is not something to guess at.
+
+**On the service** (so every publish to this Confluence uses it):
+
+```yaml
+profiles:
+  - name: myprofile
+    services:
+      - name: confluence
+        type: confluence
+        variant: server
+        base_url: https://wiki.example.com
+        options:
+          diagrams: markdown-macro
+        auth:
+          method: token
+          token: op://Private/Confluence/token
+```
+
+**On a run:**
 
 ```bash
-orbit confluence publish ./docs --space ENG --parent 123456789 --no-kroki -p myprofile
+orbit confluence publish ./docs --space ENG --parent 123456789 --diagrams markdown-macro -p myprofile
 ```
 
-**Single file - `confluence_disable_kroki` frontmatter:**
+**On a file:**
 
 ````markdown
 ---
 title: Architecture Overview
-confluence_disable_kroki: true
+confluence_diagrams: code-block
 ---
 
 # Architecture
@@ -444,9 +487,27 @@ graph TD; A-->B;
 ```
 ````
 
-That `mermaid` block publishes as a code block rather than a Kroki image.
+That `mermaid` block publishes as a code block rather than a Kroki image, even on a run that did not ask for it.
 
-The effective setting per file is the flag **OR** the frontmatter, so `--no-kroki` disables rendering everywhere while `confluence_disable_kroki: true` lets a single file opt out even when the run does not pass the flag. When disabled, orbit makes no network call to kroki.io (including diagrams nested inside `<details>` blocks).
+`--no-kroki` and `confluence_disable_kroki: true` still work and name the `code-block` strategy. They are shorthand for the same one option, not a second switch beside it: asking for `--no-kroki` and `--diagrams markdown-macro` in the same invocation is an error rather than a silent winner.
+
+#### What the markdown macro renders
+
+Only mermaid, and that was checked against a live instance rather than assumed. A page carrying ` ```mermaid `, ` ```plantuml ` and ` ```graphviz ` fences in three macros came back with all three rendered as `<code class="language-...">` blocks, and the app attached its `mermaid.init` call to `.language-mermaid` alone — plantuml and graphviz render as syntax-highlighted source, not diagrams.
+
+That is the shape you would expect, since the macro renders Markdown and mermaid is a feature of Markdown renderers (as it is on GitHub) rather than a diagram service the macro talks to.
+
+So under `markdown-macro`, mermaid goes to the macro and **every other diagram language is left as a code block** — not wrapped in a macro that would show its source anyway, and not sent to Kroki either.
+
+Leaving them as code rather than falling through to Kroki is deliberate. Rendering them via Kroki would produce more pictures, but it would do it by sending diagram source to a third party on behalf of someone who chose the one strategy that exists to keep diagrams on the instance — and silently, for exactly the languages they are least likely to check. The guarantee is worth more than the extra pictures, and it is one sentence long: **`markdown-macro` never contacts kroki.io.**
+
+If you want mermaid via the macro *and* PlantUML via Kroki, ask for it: set `confluence_diagrams: kroki` on the files that contain PlantUML, or run those separately with `--diagrams kroki`.
+
+The diagram source is passed through untouched. The Mermaid compatibility fixes orbit applies before sending a diagram to Kroki (see the diagram compatibility notes) are not applied here: they work around the Mermaid build behind kroki.io, and the app renders with its own, configured with `htmlLabels: true` — so `<br/>` in a label is a line break rather than something to strip.
+
+This also means a page published this way survives being pulled with `orbit confluence export` and published again unchanged, which was verified end to end against a live Confluence: publish, fetch the stored body, export to markdown, re-convert, and the macro comes back byte for byte.
+
+A diagram source containing `]]>` is safe. It would otherwise end the macro's CDATA section early and corrupt everything after it on the page, so orbit splits it across two sections; Confluence rejoins them on read, and `orbit confluence export` puts the original `]]>` back.
 
 #### When Kroki is slow or down
 
@@ -456,9 +517,9 @@ If kroki.io does not answer within a diagram's budget, the publish stops and nam
 
 ```
 Error: converting docs/architecture.md: kroki did not answer within 30s for the
-mermaid diagram starting "graph TD;A-->B;": rerun with --no-kroki to publish
-diagrams as code blocks (or set confluence_disable_kroki: true in this file's
-frontmatter), or raise the budget with --timeout
+mermaid diagram starting "graph TD;A-->B;": rerun with --diagrams code-block to
+publish diagrams as code blocks (or set confluence_diagrams: code-block in this
+file's frontmatter), or raise the budget with --timeout
 ```
 
 The global `--timeout` flag overrides the 30s budget, so `--timeout 2m` allows a slow link and `--timeout 5s` fails faster. `Ctrl-C` stops a publish immediately, including mid-diagram and during a retry backoff; press it again to force quit.
@@ -639,7 +700,8 @@ confluence_properties:
 | `confluence_url` | Auto | Set by `orbit confluence publish` — direct link to the page |
 | `confluence_labels` | No | Labels applied to the Confluence page for search and filtering |
 | `confluence_properties` | No | Confluence page properties macro — renders as a metadata table at the top |
-| `confluence_disable_kroki` | No | When `true`, skip Kroki rendering for this file; leave diagram code blocks as preformatted text (default: `false`) |
+| `confluence_diagrams` | No | How to render diagram code blocks in this file: `kroki` (default), `markdown-macro`, or `code-block`. An unrecognised value is an error, not a fallback |
+| `confluence_disable_kroki` | No | When `true`, the same as `confluence_diagrams: code-block` (default: `false`). Setting both to different strategies is an error |
 
 > **Tip:** Do not manually set `confluence_page_id` or `confluence_url`. Let `orbit confluence publish` manage them automatically.
 
@@ -794,7 +856,7 @@ These elements convert cleanly to Confluence storage format:
      +--- codify <-------+
    ```
 
-   Diagram code blocks (` ```mermaid `, ` ```plantuml `, etc.) are otherwise rendered as images via Kroki. To keep them as preformatted code instead, pass `--no-kroki` to `orbit confluence publish` (whole run) or set `confluence_disable_kroki: true` in a file's frontmatter (that file only).
+   Diagram code blocks (` ```mermaid `, ` ```plantuml `, etc.) are otherwise rendered as images via Kroki. Pass `--diagrams code-block` to `orbit confluence publish` (whole run) or set `confluence_diagrams: code-block` in a file's frontmatter (that file only) to keep them as preformatted code, or `--diagrams markdown-macro` / `confluence_diagrams: markdown-macro` to render mermaid with the Confluence markdown macro.
 
 5. **Cross-link with relative paths** — `[PIV Loops](../workflow/piv-loops.md)` works both locally and in Confluence (resolved during publish).
 

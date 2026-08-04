@@ -2,7 +2,10 @@
 
 Orbit renders fenced diagram code blocks as PNG images via [kroki.io](https://kroki.io). Mermaid diagrams are auto-sanitized before rendering, but some issues require manual fixes.
 
-To skip rendering entirely and keep diagram code blocks as preformatted (ASCII) text, pass `--no-kroki` to `orbit confluence publish` (whole run) or set `confluence_disable_kroki: true` in a file's frontmatter (that file only). None of the compatibility concerns below apply when rendering is disabled.
+Everything on this page describes the Kroki path — the `kroki` diagram strategy, which is the default. None of it applies under the other two:
+
+- `--diagrams code-block` (whole run) or `confluence_diagrams: code-block` (one file) skips rendering entirely and keeps diagram blocks as preformatted (ASCII) text. `--no-kroki` and `confluence_disable_kroki: true` are older spellings of the same thing.
+- `--diagrams markdown-macro` renders mermaid with the Confluence `markdown` macro instead, which needs an app on the Confluence and passes the diagram source through untouched — none of the auto-fixes below run, because they work around the Mermaid build behind kroki.io and the app renders with its own, configured with `htmlLabels: true` (so `<br/>` in a label is a line break, not something to strip). This strategy never contacts kroki.io at all: other diagram languages are left as code blocks, so nothing on this page applies to it.
 
 ## Auto-Fixed Issues (Mermaid)
 
