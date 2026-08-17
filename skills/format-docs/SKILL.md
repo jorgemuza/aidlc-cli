@@ -245,17 +245,17 @@ Fix markdown patterns that don't convert well to Confluence:
 
 ### 5. Diagram Formatting
 
-Fenced code blocks with diagram languages (`mermaid`, `plantuml`, `graphviz`, `d2`, etc.) are rendered as PNG images via kroki.io during Confluence publishing. Orbit auto-sanitizes common issues, but source diagrams should follow these rules for best results.
+Fenced code blocks with diagram languages (`mermaid`, `plantuml`, `graphviz`, `d2`, etc.) are rendered as PNG images via Kroki during Confluence publishing (the public `https://kroki.io`, or a self-hosted instance the profile names). Orbit auto-sanitizes common issues, but source diagrams should follow these rules for best results.
 
 That is the default (`--diagrams kroki`). Two other strategies exist and change what the rules below are worth:
 
 | Strategy | What happens to a diagram block |
 |----------|---------------------------------|
-| `kroki` (default) | Every diagram language → PNG from kroki.io. The auto-fixes below apply. |
-| `markdown-macro` | Mermaid → Confluence `markdown` macro, drawn live in the reader's browser. Every other language stays a code block. Never contacts kroki.io. |
+| `kroki` (default) | Every diagram language → PNG from the configured Kroki instance. The auto-fixes below apply. |
+| `markdown-macro` | Mermaid → Confluence `markdown` macro, drawn live in the reader's browser. Every other language stays a code block. Never contacts Kroki. |
 | `code-block` | Every diagram stays preformatted text. No network call. |
 
-Under `markdown-macro` the auto-fixes below are **not** applied — they work around the Mermaid build behind kroki.io, and the macro's app renders with its own (`htmlLabels: true`), so `<br/>` in a label is a line break rather than something to strip. The manual fixes further down still apply: they are about writing valid diagrams, not about Kroki.
+Under `markdown-macro` the auto-fixes below are **not** applied — they work around the Mermaid build Kroki renders with, and the macro's app renders with its own (`htmlLabels: true`), so `<br/>` in a label is a line break rather than something to strip. The manual fixes further down still apply: they are about writing valid diagrams, not about Kroki.
 
 **Auto-fixed by orbit** (no manual action needed, `kroki` strategy only):
 - `<br/>` tags in participant names, notes, and messages → stripped

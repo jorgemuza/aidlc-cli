@@ -105,13 +105,15 @@ orbit service ping
 
 ## Request Reliability
 
-Every orbit service client (jira, confluence, github, gitlab, bitbucket, gocd, draxarp, qmetry, tkm) shares a single HTTP layer with automatic retry for transient failures:
+Every orbit service client (jira, confluence, github, gitlab, bitbucket, gocd, draxarp, qmetry, kroki, tkm) shares a single HTTP layer with automatic retry for transient failures:
 
 - **Idempotent methods only** — `GET` and `HEAD` retry up to 3 times; `POST`, `PUT`, `PATCH`, `DELETE` execute exactly once so transitions/creates/updates can't be double-submitted.
 - **Exponential backoff** — 150ms → 300ms → 600ms between attempts.
 - **Retry triggers** — network/connection errors, `429 Too Many Requests`, and `5xx` (except `501 Not Implemented`).
 - **Fail-fast** — `4xx` other than `429` returns immediately (e.g. `401`, `403`, `404`, `422`) since retrying won't help.
 - Use `--debug` to see each attempt's request/response on stderr.
+
+**One path deliberately does not use this layer: rendering a diagram.** `confluence publish` probes the Kroki renderer directly, with its own schedule - 4 attempts, **1s → 4s → 9s** backoff, inside a per-diagram budget of 30s that covers every attempt and every wait (`--timeout`, or a kroki connection's `http_timeout`, overrides that budget). It also retries **`403`**, which the shared layer fails fast on, because that is how the public `https://kroki.io` signals Cloudflare rate limiting rather than a real refusal. A kroki service connection's own client - what `orbit service ping` uses - is an ordinary service client and does share the layer above.
 
 Bulk read commands that fan out over many keys — such as `orbit jira issue list --fresh` — share a bounded-concurrency worker (`internal/concurrency.ParallelDo`) so parallel fetches respect service rate limits (default concurrency: 4 for Jira Cloud) and collect partial failures instead of aborting the whole operation.
 
@@ -273,6 +275,7 @@ orbit attestation download sha256:abc123... --repo owner/repo
 | GoCD | `gocd` | — | *(required — always self-hosted)* |
 | Azure DevOps | `azure-devops` | `cloud` | *(required)* — `dev.azure.com/{org}` or `{org}.visualstudio.com` |
 | QMetry | `qmetry` | `cloud` | *(required)* |
+| Kroki | `kroki` | — | *(required on the connection - but the connection is optional: it is the diagram renderer `confluence publish` uses, and with none configured it falls back to `https://kroki.io`)* |
 
 ### Authentication Methods
 

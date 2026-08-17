@@ -156,7 +156,7 @@ orbit -p myprofile confluence publish ./docs --space FO --parent 473677299713 --
 
 ### Diagram Rendering
 
-Fenced code blocks with diagram languages are automatically rendered as images via [kroki.io](https://kroki.io) — no Confluence plugins required. Supported languages: `mermaid`, `plantuml`, `graphviz`, `dot`, `d2`, `ditaa`, `erd`, `nomnoml`, `svgbob`, `vega`, `vegalite`, `wavedrom`, `pikchr`, `structurizr`, `excalidraw`, `c4plantuml`.
+Fenced code blocks with diagram languages are automatically rendered as images via [Kroki](https://kroki.io) — no Confluence plugins required. The public `https://kroki.io` renders them unless another instance is configured (see **Choosing which Kroki renders** below). Supported languages: `mermaid`, `plantuml`, `graphviz`, `dot`, `d2`, `ditaa`, `erd`, `nomnoml`, `svgbob`, `vega`, `vegalite`, `wavedrom`, `pikchr`, `structurizr`, `excalidraw`, `c4plantuml`.
 
 ````markdown
 ```mermaid
@@ -172,13 +172,22 @@ This renders as a PNG image (max 600px wide, 800px tall — auto-scaled) with a 
 
 | Strategy | What it does |
 |----------|--------------|
-| `kroki` | Render every diagram to a kroki.io PNG. The default. |
-| `markdown-macro` | Wrap mermaid in the Confluence `markdown` macro, which an app renders in the reader's browser — the diagram stays live, vector and editable in Confluence. **Never contacts kroki.io:** other diagram languages are left as code blocks rather than sent out, since on a live instance only `.language-mermaid` gets the app's `mermaid.init` and sending the rest to a third party would defeat the reason this strategy is chosen. Ask for `kroki` per file or per run if you want them rendered. |
+| `kroki` | Render every diagram to a PNG from a Kroki instance. The default. |
+| `markdown-macro` | Wrap mermaid in the Confluence `markdown` macro, which an app renders in the reader's browser — the diagram stays live, vector and editable in Confluence. **Never contacts Kroki**, wherever that Kroki is: other diagram languages are left as code blocks rather than sent out, since on a live instance only `.language-mermaid` gets the app's `mermaid.init` and sending the rest out to a renderer would defeat the reason this strategy is chosen. Ask for `kroki` per file or per run if you want them rendered. |
 | `code-block` | Leave every diagram as preformatted (ASCII) text, calling nothing. |
 
 `markdown-macro` is never the default: the macro comes from an app that is not installed on every Confluence, and a page carrying a macro the instance lacks renders an error where the diagram should be. Set `options.diagrams: markdown-macro` on the service when the instance does have it, since that is a property of the Confluence rather than of any one publish. Under this strategy the diagram source is passed through untouched — the sanitizing below applies to the Kroki path only.
 
 `--no-kroki` and `confluence_disable_kroki: true` still work and mean `code-block`. Two names for the option in the same place disagreeing — `--no-kroki` with `--diagrams`, or `confluence_disable_kroki` with `confluence_diagrams` — is an error rather than a silent winner, as is an unrecognised strategy name. One layer overriding another is not a conflict; that is what the layers are for. All of this applies to diagrams nested inside `<details>` blocks too.
+
+**Choosing which Kroki renders.** Diagrams go to `https://kroki.io` unless a run names another instance. Most specific first:
+
+1. `--kroki-url <url>` on `publish`, `create` or `update` — a plain URL, for one run.
+2. `options.kroki_service: <name>` on the Confluence service — a `type: kroki` connection in the same profile, for an instance that needs auth, a proxy, or a certificate this machine does not trust (`tls_skip_verify`). Its `http_timeout` is the per-diagram budget (default 30s) and `options.concurrency` is how many render at once (default 4).
+3. `options.kroki_url: <url>` on the Confluence service — a plain URL, no auth, valid certificate.
+4. `https://kroki.io`.
+
+Naming both `kroki_service` and `kroki_url` on one service is an error rather than a ranking: they are two names for the same setting. There is no frontmatter key for the instance — which renderer is reachable is a property of the environment, not of a document. `orbit service ping <name>` checks a kroki connection like any other service. Full reference: `docs/confluence.md`.
 
 **Mermaid diagrams are auto-sanitized** before rendering to fix common Kroki compatibility issues:
 - `<br/>` tags stripped (replaced with `. `)
@@ -196,7 +205,7 @@ This renders as a PNG image (max 600px wide, 800px tall — auto-scaled) with a 
 - ASCII box-drawing characters — use proper Mermaid syntax instead
 - **Unquoted `[` `]` `(` `)` inside edge labels `|...|`** — Mermaid's parser interprets these as shape openers and fails with `Expecting 'SQE' / 'PE'` errors. Wrap the whole label in double quotes: `A -->|"secrets[].valueFrom"| B` and `A -->|"on_end (already shaped)"| B`. The auto-sanitizer does NOT fix this.
 
-**When a Kroki render fails, isolate the offending block before guessing.** The orbit CLI prints `Kroki failed to render mermaid diagram` without naming which one. To find the culprit, POST each block to Kroki directly and read the actual parse error — the line number in the error message refers to lines *within the diagram body*, not the markdown file:
+**When a Kroki render fails, isolate the offending block before guessing.** The orbit CLI prints `Kroki failed to render mermaid diagram` without naming which one. To find the culprit, POST each block to Kroki directly and read the actual parse error — the line number in the error message refers to lines *within the diagram body*, not the markdown file. Post to the instance the publish uses (the URL below is the public one; substitute your own if the profile names one, since renderer versions differ between instances):
 
 ```bash
 python3 - <<'PY'
@@ -213,7 +222,7 @@ for m in re.finditer(r"```mermaid\n(.*?)```", text, re.DOTALL):
 PY
 ```
 
-Note: do NOT use Python's `urllib` against `kroki.io` — Cloudflare blocks the default UA with `error code: 1010`. Use `curl` (as above) or set a browser User-Agent header.
+Note: do NOT use Python's `urllib` against the public `kroki.io` — Cloudflare blocks the default UA with `error code: 1010`. Use `curl` (as above) or set a browser User-Agent header. A self-hosted instance usually has no such gate.
 
 ### Exporting Pages
 

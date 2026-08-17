@@ -261,7 +261,7 @@ When you use `--file` with a markdown file, the orbit CLI:
 5. **Converts nested lists** — `- ` and `* ` become `<ul>`, `1. ` becomes `<ol>`, with proper nesting via indentation
 6. **Task lists** — `- [ ]` and `- [x]` items become status macros (TODO/DONE)
 7. **Converts tables** — Markdown tables with `|` pipes become `<table>` with `<thead>`, `<tbody>`, and column alignment support (`:---`, `:---:`, `---:`)
-8. **Converts code blocks** — Fenced code blocks with language hints become code macros with syntax highlighting. Supports `title="..."` parameter. **Diagram blocks** (`mermaid`, `plantuml`, `graphviz`, `d2`, `ditaa`, etc.) are rendered as PNG images via [kroki.io](https://kroki.io) — max 800px height, clickable to full image
+8. **Converts code blocks** — Fenced code blocks with language hints become code macros with syntax highlighting. Supports `title="..."` parameter. **Diagram blocks** (`mermaid`, `plantuml`, `graphviz`, `d2`, `ditaa`, etc.) are rendered as PNG images via [Kroki](https://kroki.io) (the public instance, or the one the profile names) — max 800px height, clickable to full image
 9. **GitHub Alerts** — `> [!NOTE]`, `> [!WARNING]`, `> [!TIP]`, `> [!CAUTION]`, `> [!IMPORTANT]` map to Confluence note/warning/tip/info macros
 10. **Plain blockquotes** — `> ` lines become info panel macros
 11. **MkDocs admonitions** — `!!! note "title"` with indented content maps to Confluence panel macros

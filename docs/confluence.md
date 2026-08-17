@@ -193,6 +193,7 @@ orbit confluence create [flags]
 | `-b, --body` | No | Page body content as a string (Confluence storage format / XHTML) |
 | `-f, --file` | No | Path to a markdown file to convert and upload as the page body |
 | `--diagrams` | No | How to render diagram code blocks in `--file`: `kroki` (default), `markdown-macro`, or `code-block` |
+| `--kroki-url` | No | Kroki instance to render diagrams through for this run (default `https://kroki.io`) |
 
 ### Examples
 
@@ -231,6 +232,7 @@ orbit confluence update [page-id] [flags]
 | `-b, --body` | New body content as a string |
 | `-f, --file` | Path to a markdown file to convert and use as the new body |
 | `--diagrams` | How to render diagram code blocks in `--file`: `kroki` (default), `markdown-macro`, or `code-block` |
+| `--kroki-url` | Kroki instance to render diagrams through for this run (default `https://kroki.io`) |
 
 ### Examples
 
@@ -385,6 +387,7 @@ orbit confluence publish [directory] [flags]
 | `--dry-run` | No | Preview what would be published without making any changes |
 | `--diagrams` | No | How to render diagram code blocks for the whole run: `kroki` (default), `markdown-macro`, or `code-block` |
 | `--no-kroki` | No | Shorthand for `--diagrams code-block` |
+| `--kroki-url` | No | Kroki instance to render diagrams through for this run (default `https://kroki.io`) |
 
 ### Directory Structure Rules
 
@@ -423,6 +426,9 @@ orbit confluence publish ./docs --space ENG --parent 123456789 --diagrams code-b
 
 # Render mermaid with the Confluence markdown macro instead of Kroki
 orbit confluence publish ./docs --space ENG --parent 123456789 --diagrams markdown-macro -p myprofile
+
+# Render diagrams through a self-hosted Kroki, just for this run
+orbit confluence publish ./docs --space ENG --parent 123456789 --kroki-url https://kroki.internal.example.com -p myprofile
 ```
 
 ### Diagram Rendering
@@ -431,8 +437,8 @@ By default, fenced diagram blocks (` ```mermaid `, ` ```plantuml `, etc.) are re
 
 | Strategy | What it does | What it needs |
 |----------|--------------|---------------|
-| `kroki` | Renders every diagram type to a PNG served by kroki.io and links the image. The default. | kroki.io reachable at publish time |
-| `markdown-macro` | Wraps mermaid diagrams in the Confluence `markdown` macro. An app turns it into a `language-mermaid` code block plus a `mermaid.init` call, so the reader's browser draws the diagram: it stays live, vector and editable in Confluence. **Never contacts kroki.io** — other diagram languages are left as code blocks. | An app providing the `markdown` macro, installed on the Confluence |
+| `kroki` | Renders every diagram type to a PNG served by a Kroki instance and links the image. The default. | A reachable Kroki — the public `https://kroki.io`, or your own; see [Choosing which Kroki renders](#choosing-which-kroki-renders) |
+| `markdown-macro` | Wraps mermaid diagrams in the Confluence `markdown` macro. An app turns it into a `language-mermaid` code block plus a `mermaid.init` call, so the reader's browser draws the diagram: it stays live, vector and editable in Confluence. **Never contacts Kroki** — other diagram languages are left as code blocks. | An app providing the `markdown` macro, installed on the Confluence |
 | `code-block` | Leaves every diagram as preformatted (ASCII) text. Makes no network call at all. | Nothing |
 
 `markdown-macro` is never the default. The macro comes from an app that is not installed on every Confluence, and a page carrying a macro the instance does not have renders an error where the diagram should be.
@@ -491,6 +497,64 @@ That `mermaid` block publishes as a code block rather than a Kroki image, even o
 
 `--no-kroki` and `confluence_disable_kroki: true` still work and name the `code-block` strategy. They are shorthand for the same one option, not a second switch beside it: asking for `--no-kroki` and `--diagrams markdown-macro` in the same invocation is an error rather than a silent winner.
 
+#### Choosing which Kroki renders
+
+Under the `kroki` strategy, diagrams render through `https://kroki.io` unless you name another instance. Self-hosting one is the usual reason to: the public instance is a free shared service, and diagram source that describes internal systems is still diagram source leaving your network.
+
+Which instance is used is resolved once per run. The most specific opinion wins:
+
+1. **The invocation** - `--kroki-url <url>` on `publish`, `create` or `update`. A plain URL with the default transport, for a one-off run or for CI that would rather not extend its config.
+2. **A kroki service connection** - `options.kroki_service: <name>` on the Confluence service, naming a `type: kroki` connection in the same profile. Use this when reaching the instance takes more than a URL: a token, an egress proxy, an internal CA.
+3. **A plain URL on the service** - `options.kroki_url: <url>` on the Confluence service. The simple case: no auth, a certificate this machine already trusts.
+4. **The public instance** - `https://kroki.io`, if nothing above says otherwise.
+
+There is deliberately **no frontmatter key** for the instance. Which renderer is reachable is a property of the environment - a VPN, an internal CA, a token - not of a document: a file that named an instance would publish from one machine and fail from the next.
+
+`kroki_service` and `kroki_url` are two names for the same setting, so a service that sets **both** is refused rather than ranked, the same way `--no-kroki` against `--diagrams` is. Set one or the other. The refusal stands even when `--kroki-url` would have outranked both: a broken configuration is broken whether or not today's invocation happened to route around it.
+
+A `kroki_service` that names nothing, or names something that is not `type: kroki`, stops the run rather than falling back to the public instance - falling back is the one outcome the setting exists to prevent.
+
+**A kroki service connection** is an ordinary service connection, so `auth`, `proxy`, `tls_skip_verify`, `headers`, `http_timeout` and `op://` / `infisical://` secret references all work as they do for Jira or Confluence:
+
+```yaml
+profiles:
+  - name: myprofile
+    services:
+      - name: kroki-internal
+        type: kroki
+        base_url: https://kroki.internal.example.com
+        tls_skip_verify: true      # an internal CA this machine does not trust
+        http_timeout: 45s          # the per-diagram budget
+        auth:
+          method: token
+          token: op://Private/Kroki/token
+        options:
+          concurrency: "12"        # how many diagrams at once
+
+      - name: confluence
+        type: confluence
+        variant: server
+        base_url: https://wiki.example.com
+        options:
+          kroki_service: kroki-internal
+        auth:
+          method: token
+          token: op://Private/Confluence/token
+```
+
+`orbit service ping kroki-internal` checks it like any other service; it reports the Kroki version, the fan-out and the per-diagram budget in force.
+
+**Two settings are per-instance**, because the defaults are tuned for the public one:
+
+| Setting | Default | What it is |
+|---------|---------|------------|
+| `http_timeout` | `30s` | The budget for a single diagram, covering every retry and the backoff between them. Not the 15s other services default to: Kroki renders server-side before it answers, and the budget has to hold four attempts plus 1s+4s+9s of backoff. |
+| `options.concurrency` | `4` | How many diagrams are rendered at once. Four is restraint towards a free shared service that rate-limits; an instance you host yourself has no such constraint. |
+
+Both are validated rather than guessed at: a `concurrency` that is not a positive whole number, or an `http_timeout` that is not a duration, stops the run with an error naming the setting. The global `--timeout` flag still overrides the budget for a run.
+
+`--kroki-url` and `options.kroki_url` take a plain URL and get the defaults, since there is nowhere on them to say otherwise. Both are checked for being an `http://` or `https://` URL where they are written - an unusable URL left to the diagram probe would fail exactly as a diagram Kroki cannot render fails, as a silent code block.
+
 #### What the markdown macro renders
 
 Only mermaid, and that was checked against a live instance rather than assumed. A page carrying ` ```mermaid `, ` ```plantuml ` and ` ```graphviz ` fences in three macros came back with all three rendered as `<code class="language-...">` blocks, and the app attached its `mermaid.init` call to `.language-mermaid` alone — plantuml and graphviz render as syntax-highlighted source, not diagrams.
@@ -499,11 +563,11 @@ That is the shape you would expect, since the macro renders Markdown and mermaid
 
 So under `markdown-macro`, mermaid goes to the macro and **every other diagram language is left as a code block** — not wrapped in a macro that would show its source anyway, and not sent to Kroki either.
 
-Leaving them as code rather than falling through to Kroki is deliberate. Rendering them via Kroki would produce more pictures, but it would do it by sending diagram source to a third party on behalf of someone who chose the one strategy that exists to keep diagrams on the instance — and silently, for exactly the languages they are least likely to check. The guarantee is worth more than the extra pictures, and it is one sentence long: **`markdown-macro` never contacts kroki.io.**
+Leaving them as code rather than falling through to Kroki is deliberate. Rendering them via Kroki would produce more pictures, but it would do it by sending diagram source out to a renderer on behalf of someone who chose the one strategy that exists to keep diagrams in Confluence — and silently, for exactly the languages they are least likely to check. The guarantee is worth more than the extra pictures, and it is one sentence long: **`markdown-macro` never contacts Kroki**, wherever that Kroki is.
 
 If you want mermaid via the macro *and* PlantUML via Kroki, ask for it: set `confluence_diagrams: kroki` on the files that contain PlantUML, or run those separately with `--diagrams kroki`.
 
-The diagram source is passed through untouched. The Mermaid compatibility fixes orbit applies before sending a diagram to Kroki (see the diagram compatibility notes) are not applied here: they work around the Mermaid build behind kroki.io, and the app renders with its own, configured with `htmlLabels: true` — so `<br/>` in a label is a line break rather than something to strip.
+The diagram source is passed through untouched. The Mermaid compatibility fixes orbit applies before sending a diagram to Kroki (see the diagram compatibility notes) are not applied here: they work around the Mermaid build Kroki renders with, and the app renders with its own, configured with `htmlLabels: true` — so `<br/>` in a label is a line break rather than something to strip.
 
 This also means a page published this way survives being pulled with `orbit confluence export` and published again unchanged, which was verified end to end against a live Confluence: publish, fetch the stored body, export to markdown, re-convert, and the macro comes back byte for byte.
 
@@ -511,18 +575,19 @@ A diagram source containing `]]>` is safe. It would otherwise end the macro's CD
 
 #### When Kroki is slow or down
 
-Diagrams are rendered four at a time, and each one gets 30 seconds covering every retry and the backoff between them. A page of eight diagrams against an unresponsive Kroki therefore costs about two 30s windows rather than eight. Rendering order does not affect the published page: the markup is emitted in document order whatever order the renders finish in.
+Diagrams are rendered four at a time, and each one gets 30 seconds covering every retry and the backoff between them (a kroki service connection sets both -- see [Choosing which Kroki renders](#choosing-which-kroki-renders)). A page of eight diagrams against an unresponsive Kroki therefore costs about two 30s windows rather than eight. Rendering order does not affect the published page: the markup is emitted in document order whatever order the renders finish in.
 
-If kroki.io does not answer within a diagram's budget, the publish stops and names the file and diagram that timed out rather than hanging:
+If the instance does not answer within a diagram's budget, the publish stops and names the instance, the file and the diagram that timed out rather than hanging:
 
 ```
-Error: converting docs/architecture.md: kroki did not answer within 30s for the
-mermaid diagram starting "graph TD;A-->B;": rerun with --diagrams code-block to
-publish diagrams as code blocks (or set confluence_diagrams: code-block in this
-file's frontmatter), or raise the budget with --timeout
+Error: converting docs/architecture.md: kroki at https://kroki.io did not answer
+within 30s for the mermaid diagram starting "graph TD;A-->B;": rerun with
+--diagrams code-block to publish diagrams as code blocks (or set
+confluence_diagrams: code-block in this file's frontmatter), or raise the budget
+with --timeout or the kroki service's http_timeout
 ```
 
-The global `--timeout` flag overrides the 30s budget, so `--timeout 2m` allows a slow link and `--timeout 5s` fails faster. `Ctrl-C` stops a publish immediately, including mid-diagram and during a retry backoff; press it again to force quit.
+The global `--timeout` flag overrides the budget, so `--timeout 2m` allows a slow link and `--timeout 5s` fails faster; `http_timeout` on a kroki service raises or lowers it for every run against that instance. `Ctrl-C` stops a publish immediately, including mid-diagram and during a retry backoff; press it again to force quit.
 
 Given this directory:
 

@@ -166,6 +166,7 @@ orbit -p profile confluence create [flags]
 | `-b, --body` | string | Page body in storage format (XHTML) |
 | `-f, --file` | string | Markdown file to convert and upload |
 | `--diagrams` | string | How to render diagram code blocks in `--file`: `kroki` (default), `markdown-macro`, `code-block` |
+| `--kroki-url` | string | Kroki instance to render diagrams through for this run (default `https://kroki.io`) |
 
 **Examples:**
 
@@ -202,6 +203,7 @@ orbit -p profile confluence update <page-id> [flags]
 | `-b, --body` | string | New body in storage format (XHTML) |
 | `-f, --file` | string | Markdown file to convert and upload |
 | `--diagrams` | string | How to render diagram code blocks in `--file`: `kroki` (default), `markdown-macro`, `code-block` |
+| `--kroki-url` | string | Kroki instance to render diagrams through for this run (default `https://kroki.io`) |
 
 **Examples:**
 
@@ -351,6 +353,7 @@ orbit -p profile confluence publish <directory> [flags]
 | `--dry-run` | bool | Preview without creating pages |
 | `--diagrams` | string | How to render diagram code blocks for the whole run: `kroki` (default), `markdown-macro`, `code-block` |
 | `--no-kroki` | bool | Shorthand for `--diagrams code-block` |
+| `--kroki-url` | string | Kroki instance to render diagrams through for this run (default `https://kroki.io`) |
 
 **Examples:**
 
@@ -366,6 +369,9 @@ orbit -p paybook confluence publish ./docs --space FO --parent 473677299713 --di
 
 # Render mermaid with the Confluence markdown macro instead of Kroki
 orbit -p paybook confluence publish ./docs --space FO --parent 473677299713 --diagrams markdown-macro
+
+# Render diagrams through a self-hosted Kroki for this run
+orbit -p paybook confluence publish ./docs --space FO --parent 473677299713 --kroki-url https://kroki.internal.example.com
 ```
 
 **Directory Structure Rules:**
@@ -388,6 +394,10 @@ docs/
 1. YAML frontmatter `title:` field
 2. First `# heading` in the file
 3. Filename converted to title case (e.g., `quick-ref.md` → "Quick Ref")
+
+**Kroki instance:**
+
+Diagrams render through `https://kroki.io` unless another instance is named. Most specific first: `--kroki-url` on the run, then `options.kroki_service` on the Confluence service (a `type: kroki` connection in the same profile, for an instance needing auth, a proxy or its own CA), then `options.kroki_url` on the Confluence service (a plain URL), then the public instance. Naming both service options is an error. There is no frontmatter key: which renderer is reachable is a property of the environment, not of a document. See `docs/confluence.md` for the kroki service connection's own `http_timeout` (the per-diagram budget) and `options.concurrency`.
 
 **Frontmatter Fields:**
 
