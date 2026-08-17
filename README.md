@@ -47,18 +47,23 @@ Releases are built reproducibly by GitHub Actions and the checksums file is sign
 so you can confirm a binary really came from this project:
 
 - **Signed checksums (cosign).** `checksums.txt` is signed keylessly with
-  [cosign](https://docs.sigstore.dev/) (`checksums.txt.sig` + `checksums.txt.pem`).
-  Download all three from the release, verify the signature, then verify your
+  [cosign](https://docs.sigstore.dev/), as a single Sigstore bundle
+  (`checksums.txt.sigstore.json`) carrying both the signature and the certificate.
+  Download both files from the release, verify the signature, then verify your
   download's checksum against the file:
 
   ```bash
   cosign verify-blob checksums.txt \
-    --signature checksums.txt.sig \
-    --certificate checksums.txt.pem \
+    --bundle checksums.txt.sigstore.json \
     --certificate-identity-regexp 'https://github.com/jorgemuza/orbit-cli/.*' \
     --certificate-oidc-issuer https://token.actions.githubusercontent.com
   shasum -a 256 -c checksums.txt --ignore-missing
   ```
+
+  Releases up to and including **v0.66.0** were signed in the older two-file form
+  instead. Verify those with `--signature checksums.txt.sig --certificate
+  checksums.txt.pem` in place of `--bundle`, and note that cosign v4 removed those
+  flags, so verifying them needs a cosign 3.x.
 
 - **Build provenance (SLSA).** The release workflow also emits GitHub build-provenance
   attestations — verifiable with `gh attestation verify <file> --repo jorgemuza/orbit-cli`.
