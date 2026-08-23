@@ -21,6 +21,8 @@ Manage Jira issues, epics, sprints, boards, projects, releases, custom fields, s
 
 All commands follow the pattern: `orbit -p <profile> jira <resource> <action> [flags]`
 
+The tree stops there - `<action>` is always a leaf, so there is no `<action> list`. Reading has its own action name next to writing: `issue view --comments` reads comments, `issue comment` only writes them; `issue attachments` lists attachments, `issue attach` only uploads. Guessing a subcommand is unsafe rather than merely wrong: write actions take the issue key as their first positional argument, so `jira issue comment list PROJ-123` is parsed as issue key `list` with body `PROJ-123` and sent to Jira as a real write. Check `references/commands.md` instead of guessing.
+
 The `-o` flag controls output format: `table` (default), `json`, `yaml`.
 
 For full command details and flags, see `references/commands.md`.
@@ -126,6 +128,8 @@ orbit -p myprofile jira issue move PROJ-123 Done --comment "Fixed in v2.1" --res
 ```
 
 ### Comments with @mentions
+
+`issue comment` writes a comment. To read comments, use `issue view --comments N` (see [Viewing Issues](#viewing-issues)).
 
 Use `[~accountId:ID]` to @mention users in comments (Cloud). Jira renders these as clickable user links. For Server, use `[~username]`.
 

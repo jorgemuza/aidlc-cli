@@ -2,6 +2,10 @@
 
 Complete reference for all `orbit jira` commands with flags and examples.
 
+> **The command tree is flat.** Every command below is a leaf - none takes a nested sub-action, so `<command> list` is never valid. Reading has its own command name at the same level as writing: `issue view --comments` (not `issue comment list`), `issue attachments` (not `issue attach list`), `field context-list`, `screen tab-list`.
+>
+> This is worth care because write commands take the issue key as their **first positional argument**. `orbit jira issue comment list PYMT-123` does not fail with "unknown command" - it is parsed as issue key `list`, body `PYMT-123`, and sent to Jira as a real write against an issue that does not exist. If a command in this reference is not listed below, it does not exist; check here rather than guessing a subcommand.
+
 ## Table of Contents
 
 - [Global Flags](#global-flags)
@@ -135,7 +139,7 @@ orbit -p paybook jira issue list --project PYMT -s Open --fresh
 
 ### issue view
 
-View detailed issue information including summary, status, assignee, description, subtasks, links, and **comments with timestamps**.
+View detailed issue information including summary, status, assignee, description, subtasks, links, and **comments with timestamps**. This is the command for reading comments; `issue comment` only writes them.
 
 **Aliases:** `show`
 
@@ -330,6 +334,8 @@ orbit -p profile jira issue delete <issue-key> [flags]
 ### issue comment
 
 Add a comment to an issue. Body can be passed as `--body` flag or as a positional argument. Supports @mentions using Jira mention syntax.
+
+> **Write-only.** To read comments use [`issue view`](#issue-view), which prints them with author and date. There is no `comment list` subcommand. The first positional argument is always the issue key, so `orbit -p profile jira issue comment list PYMT-123` is parsed as issue key `list` with body `PYMT-123` and attempts a real write against a nonexistent issue.
 
 ```bash
 orbit -p profile jira issue comment <issue-key> --body <body>

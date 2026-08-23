@@ -160,6 +160,8 @@ orbit jira issue list --project MYPROJ -s "Open" --fresh -p myprofile
 
 View a single issue's details. Aliases: `show`.
 
+This is also how you **read comments** - the output includes the most recent comments with author and date. `issue comment` only writes them.
+
 ```
 orbit jira issue view [issue-key] [flags] -p myprofile
 ```
@@ -174,16 +176,19 @@ orbit jira issue view [issue-key] [flags] -p myprofile
 
 | Flag | Default | Description |
 |------|---------|-------------|
-| `--comments` | `1` | Number of comments to display |
+| `--comments` | `10` | Number of recent comments to display (`0` hides them) |
 
 #### Examples
 
 ```bash
-# View an issue with the default 1 comment
+# View an issue with the default 10 most recent comments
 orbit jira issue view MYPROJ-123 -p myprofile
 
-# View an issue with the last 5 comments
-orbit jira issue view MYPROJ-123 --comments 5 -p myprofile
+# View an issue with the last 50 comments
+orbit jira issue view MYPROJ-123 --comments 50 -p myprofile
+
+# Hide comments
+orbit jira issue view MYPROJ-123 --comments 0 -p myprofile
 ```
 
 ---
@@ -399,6 +404,8 @@ orbit jira issue delete PRT-200 -p myprofile             # Capability
 ### issue comment
 
 Add a comment to an issue. Body can be passed as `--body` flag or as a positional argument.
+
+**This command is write-only.** To read existing comments, use [`issue view`](#issue-view), which prints them with author and date. There is no `comment list` subcommand: the first positional argument is always the issue key, so `orbit jira issue comment list MYPROJ-123` is parsed as issue key `list` with body `MYPROJ-123` and fails against an issue that does not exist.
 
 ```
 orbit jira issue comment [issue-key] [body...] [flags] -p myprofile
@@ -1674,6 +1681,19 @@ orbit jira issuetype-list -p myprofile
 ---
 
 ## Notes
+
+### The command tree is flat
+
+Every `orbit jira` command in this reference is a leaf. No command takes a nested sub-action, so `<command> list` is never valid - reading always has its own name at the same level as writing:
+
+| To read | Use | Not |
+|---------|-----|-----|
+| Comments | `issue view <key> --comments N` | `issue comment list <key>` |
+| Attachments | `issue attachments <key>` | `issue attach list <key>` |
+| Field contexts | `field context-list <field-id>` | `field context list <field-id>` |
+| Screen tabs | `screen tab-list <screen-id>` | `screen tab list <screen-id>` |
+
+This matters because the write commands take the issue key as their first positional argument. `orbit jira issue comment list MYPROJ-123` does not error on an unknown subcommand - it is parsed as issue key `list` with body `MYPROJ-123` and sent to Jira as a real write against an issue that does not exist.
 
 ### Cloud vs Server
 
