@@ -223,6 +223,14 @@ Approve a pull request as the current user.
 
 Remove your approval from a pull request.
 
+### `bitbucket pr needs-work <project-key> <repo-slug> <pr-id>`
+
+**Alias:** `request-changes`
+
+Flag a pull request as `NEEDS_WORK` - Bitbucket Server's "request changes" signal. Blocks the merge without closing the PR (unlike `decline`). **Server only.** Pair it with `pr comment` so the author has the actionable feedback.
+
+All three status commands verify the status Bitbucket stored, so a success line means the flag is really on the PR.
+
 ### `bitbucket pr decline <project-key> <repo-slug> <pr-id>`
 
 Decline a pull request. Automatically handles version for optimistic locking.

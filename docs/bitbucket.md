@@ -609,7 +609,7 @@ orbit bb pr unapprove TEAM my-service 42 -p myprofile
 
 Flag a pull request as `NEEDS_WORK` — Bitbucket Server's "request changes" signal. Blocks merge the same way the manual "Needs Work" button in the UI does, without closing the PR (unlike `decline`). Aliases: `request-changes`. **Server only** — Bitbucket Cloud has a different approval model.
 
-Uses `POST /participants` (create-or-update) under the hood, so it works even when the caller isn't already listed as a reviewer on the PR.
+Works even when the caller isn't already listed as a reviewer on the PR, and fails loudly if Bitbucket doesn't actually store the flag - see the note under this section.
 
 | Argument | Position | Description |
 |----------|----------|-------------|
@@ -626,7 +626,11 @@ orbit bb pr needs-work TEAM my-service 42 -p myprofile
 orbit bb pr approve TEAM my-service 42 -p myprofile
 ```
 
-> `approve`, `unapprove`, and `needs-work` all share a single `SetReviewStatus` helper that `POST`s to `/participants` with `role=REVIEWER` and the target status. The caller's username is resolved from the profile's `auth.username` (basic auth) or from the `X-AUSERNAME` header on an authed GET (PAT/bearer), then memoized for the life of the process.
+> `approve`, `unapprove`, and `needs-work` all share a single `SetReviewStatus` helper that `PUT`s to `/participants/{userSlug}` with the target status, then checks the participant Bitbucket echoes back to confirm the status was stored. The check is not paranoia: `POST /participants` accepts a `status` field, answers `200`, and stores only the role - so the earlier POST-based implementation reported success while leaving the caller `UNAPPROVED` and the PR unflagged.
+>
+> If the `PUT` is refused (some instances reject it for a user who isn't on the PR yet, though Bitbucket documents it as adding them implicitly), the helper `POST`s to `/participants` with `role=REVIEWER` to enrol the caller and retries the `PUT` once. If that fails too, the error you see is Bitbucket's own refusal of the status change.
+>
+> The caller's username is resolved from the profile's `auth.username` (basic auth) or from the `X-AUSERNAME` header on an authed GET (PAT/bearer), then memoized for the life of the process.
 
 ### `pr activity`
 
