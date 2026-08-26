@@ -2,7 +2,7 @@
 
 A unified CLI for managing connections to development lifecycle services.
 
-Supports **Jira**, **Confluence**, **GitLab**, **GitHub**, **Bitbucket**, **GoCD**, and **Azure DevOps** (cloud and self-hosted). Includes **build provenance attestation** verification via Sigstore and **AI token usage tracking** (tkm) with cost analysis per model. Pairs with [RTK](https://github.com/rtk-ai/rtk) for command output compression (60-90% token savings). Organize connections into profiles to switch between projects seamlessly.
+Supports **Jira**, **Confluence**, **GitLab**, **GitHub**, **Forgejo**/**Gitea**, **Bitbucket**, **GoCD**, and **Azure DevOps** (cloud and self-hosted). Includes **build provenance attestation** verification via Sigstore and **AI token usage tracking** (tkm) with cost analysis per model. Pairs with [RTK](https://github.com/rtk-ai/rtk) for command output compression (60-90% token savings). Organize connections into profiles to switch between projects seamlessly.
 
 Secrets can be stored as [1Password](https://1password.com/) references (`op://vault/item/field`) or [Infisical](https://infisical.com/) references (`infisical://<env>/<path>/<KEY>`) and are resolved at runtime. See [Secrets](docs/secrets.md).
 
@@ -110,7 +110,7 @@ orbit service ping
 
 ## Request Reliability
 
-Every orbit service client (jira, confluence, github, gitlab, bitbucket, gocd, draxarp, qmetry, kroki, tkm) shares a single HTTP layer with automatic retry for transient failures:
+Every orbit service client (jira, confluence, github, forgejo, gitlab, bitbucket, gocd, draxarp, qmetry, kroki, tkm) shares a single HTTP layer with automatic retry for transient failures:
 
 - **Idempotent methods only** — `GET` and `HEAD` retry up to 3 times; `POST`, `PUT`, `PATCH`, `DELETE` execute exactly once so transitions/creates/updates can't be double-submitted.
 - **Exponential backoff** — 150ms → 300ms → 600ms between attempts.
@@ -220,6 +220,26 @@ orbit gh release latest octocat/hello-world
 
 **[Full GitHub reference →](docs/github.md)**
 
+### Forgejo
+
+Manage a self-hosted Forgejo (or Gitea) instance: repositories, pull requests and reviews, issues, Actions runs and job logs, releases. Alias: `fj`.
+
+```bash
+orbit fj repo view jorgemuza/orbit-cli
+orbit fj pr list jorgemuza/orbit-cli
+orbit fj pr approve jorgemuza/orbit-cli 17
+orbit fj pr request-changes jorgemuza/orbit-cli 17 -m "Three things to fix"
+orbit fj pr merge jorgemuza/orbit-cli 17 --method squash --delete-branch
+orbit fj run list jorgemuza/orbit-cli --status failure
+orbit fj run log jorgemuza/orbit-cli 263 --failed
+orbit fj issue list jorgemuza/orbit-cli
+orbit fj api /api/v1/repos/jorgemuza/orbit-cli/branches --paginate
+```
+
+Runs are addressed by the number in the web UI. The API path takes a different id, and asking it for the visible number returns a *different* run with a 200 - so orbit resolves the number and verifies it got the run you asked for. Reviews and merges are likewise checked against what the server stored rather than trusting the 2xx.
+
+**[Full Forgejo reference →](docs/forgejo.md)**
+
 ### Bitbucket
 
 Manage projects, repositories, pull requests, branches, tags, reviewer conditions, and users. Supports Cloud and Data Center. Alias: `bb`.
@@ -276,6 +296,7 @@ orbit attestation download sha256:abc123... --repo owner/repo
 | Confluence | `confluence` | `cloud`, `server` | *(required)* |
 | GitLab | `gitlab` | `cloud`, `server` | `https://gitlab.com` |
 | GitHub | `github` | `cloud`, `server` | `https://api.github.com` |
+| Forgejo / Gitea | `forgejo` | — | *(required — always self-hosted)* |
 | Bitbucket | `bitbucket` | `cloud`, `server` | `https://api.bitbucket.org/2.0` |
 | GoCD | `gocd` | — | *(required — always self-hosted)* |
 | Azure DevOps | `azure-devops` | `cloud` | *(required)* — `dev.azure.com/{org}` or `{org}.visualstudio.com` |
@@ -405,7 +426,7 @@ Orbit is available as a [Claude Code](https://docs.anthropic.com/en/docs/claude-
 ### Install individual skills (alternative)
 
 ```bash
-npx @anthropic-ai/claude-code-skills --skills jira,confluence,github,gitlab,bitbucket,gocd,format-docs --from github:jorgemuza/orbit
+npx @anthropic-ai/claude-code-skills --skills jira,confluence,github,forgejo,gitlab,bitbucket,gocd,format-docs --from github:jorgemuza/orbit
 ```
 
 ### Available Skills
@@ -417,6 +438,7 @@ npx @anthropic-ai/claude-code-skills --skills jira,confluence,github,gitlab,bitb
 | `github` | Repos, PRs, Actions runs, issues, releases, secrets (alias: `gh`) |
 | `gitlab` | Projects, MRs, pipelines, branches, tags, variables (alias: `gl`) |
 | `bitbucket` | Projects, repos, PRs, branches, tags, reviewer conditions, approvals (alias: `bb`) |
+| `forgejo` | Repos, PRs and reviews, issues, Actions runs and job logs, releases on Forgejo/Gitea (alias: `fj`) |
 | `gocd` | Pipelines, agents, environments, config repos, server admin, stages, jobs (alias: `cd`) |
 | `draxarp` | Projects, tasks, specs, docs, memories, sprints, knowledge graph, context captures |
 | `attestation` | Verify, download, and inspect build provenance attestations (Sigstore/SLSA) |
